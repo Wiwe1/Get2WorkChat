@@ -15,9 +15,8 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginLeft="8dp"
-        android:background=""
-        app:layout_constraintTop_toTopOf="parrent" />
-
+        android:background="@color/colorPrimaryDark"
+         />
     <TextView
         android:id="@+id/text_message_name"
         android:text="John Nielsen"
