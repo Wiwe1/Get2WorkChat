@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/graylight"
     android:orientation="vertical"
-    tools:context=".Act_profile">
+    tools:context=".Activities.Profile_Act">
 
     <RelativeLayout
         android:layout_width="match_parent"

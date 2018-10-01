@@ -1,4 +1,4 @@
-package com.example.djw.get2workchat;
+package com.example.djw.get2workchat.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,20 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class Frag_contacts extends Fragment {
+import com.example.djw.get2workchat.R;
 
-    View v;
-    public Frag_contacts() {
+public class Chats_frag extends Fragment {
+
+
+    private View v;
+
+    public Chats_frag() {
     }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return  v = inflater.inflate(R.layout.frag_contact,container,false);
 
-     v = inflater.inflate(R.layout.frag_contact,container,false);
 
-        return v;
     }
-
-
 }
