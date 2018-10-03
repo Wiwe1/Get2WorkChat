@@ -18,7 +18,7 @@ public class Calls_frag extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return  v = inflater.inflate(R.layout.frag_contact,container,false);
+        return  v = inflater.inflate(R.layout.contacts_frag,container,false);
 
 
     }
