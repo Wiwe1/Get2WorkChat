@@ -5,9 +5,20 @@ public class Message {
 
     private String Message;
     private String timestamp;
-    private User sender;
+    private String senderId;
     private String url;
     private String image;
+    private String Chatroom_id;
+
+
+    public Message(String message, String timestamp, String senderId, String url, String image, String chatroom_id) {
+        this.Message = message;
+        this.timestamp = timestamp;
+        this.senderId = senderId;
+        this.url = url;
+        this.image = image;
+        this.Chatroom_id = chatroom_id;
+    }
 
 
     public String getMessage() {
@@ -26,12 +37,12 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public User getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
     public String getUrl() {
@@ -50,12 +61,12 @@ public class Message {
         this.image = image;
     }
 
-    public String SendMessage(String Message,String Url,User sender,String Timestamp){
-
-        return "Hej";
+    public String getChatroom_id() {
+        return Chatroom_id;
     }
 
-
-
+    public void setChatroom_id(String chatroom_id) {
+        Chatroom_id = chatroom_id;
+    }
 }
 
