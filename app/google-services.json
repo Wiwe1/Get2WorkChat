@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "799472616617",
+    "firebase_url": "https://get2workchat-acf96.firebaseio.com",
+    "project_id": "get2workchat-acf96",
+    "storage_bucket": "get2workchat-acf96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799472616617:android:9735d9fcbe7093f3",
+        "android_client_info": {
+          "package_name": "com.example.djw.get2workchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "799472616617-n4mp8n7ng3sg00arcnk07vl66tql43gn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqRCKsHC61ZLpnOBL9DUqeXiwtgdQxjdU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

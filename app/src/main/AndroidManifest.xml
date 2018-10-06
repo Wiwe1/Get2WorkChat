@@ -9,22 +9,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.Main_act">
+        <activity
+            android:name=".Activities.Splash_act"
+            android:theme="@style/SplashTheam">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
         </activity>
         <activity
             android:name=".Activities.Profile_Act"
-            android:theme="@style/Profile"
-
-            >
-
-
-
-        </activity>
+            android:theme="@style/Profile" />
+        <activity android:name=".Activities.SignIn_act" />
+        <activity android:name=".Activities.Main_act"></activity>
     </application>
 
 </manifest>
