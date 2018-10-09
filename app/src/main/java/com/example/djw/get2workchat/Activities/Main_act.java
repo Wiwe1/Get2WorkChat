@@ -1,10 +1,14 @@
 package com.example.djw.get2workchat.Activities;
-
-import android.os.Message;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Fragments.Calls_frag;
@@ -12,9 +16,13 @@ import com.example.djw.get2workchat.Fragments.Chats_frag;
 import com.example.djw.get2workchat.Fragments.Contacts_frag;
 import com.example.djw.get2workchat.R;
 import com.example.djw.get2workchat.ViewPagerAdapter;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static android.app.PendingIntent.getActivity;
 
 
 public class Main_act extends AppCompatActivity {
@@ -23,13 +31,17 @@ public class Main_act extends AppCompatActivity {
     private ViewPagerAdapter vPageAdapp;
     private ViewPager vPage;
     private User testUsr;
+    private Toolbar tbar;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        testUsr = new User("Bob",null,null);
 
+        tbar = (Toolbar)findViewById(R.id.toolbar);
         tab = (TabLayout) findViewById(R.id.tab_layout);
         vPage = (ViewPager) findViewById(R.id.viewpage);
         vPageAdapp = new ViewPagerAdapter(getSupportFragmentManager());
@@ -37,17 +49,65 @@ public class Main_act extends AppCompatActivity {
         vPageAdapp.AddFragment(new Chats_frag(),"Chats ");
         vPageAdapp.AddFragment(new Contacts_frag(),"Contacts");
         vPageAdapp.AddFragment(new Calls_frag(),"Calls");
-
-       FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users");
-        String userId = myRef.push().getKey();
-        myRef.child(userId).setValue(testUsr);
-
-
         vPage.setAdapter(vPageAdapp);
         tab.setupWithViewPager(vPage);
+        setSupportActionBar(tbar);
+
+      //  testUsr = new User("bob",null);
+
+
+//FirebaseDatabase database = FirebaseDatabase.getInstance();
+     //DatabaseReference myRef = database.getReference("users");
+   //     String userId = myRef.push().getKey();
+//        myRef.child(userId).setValue(testUsr);
+ //       myRef.push();
+
+
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_menu,menu);
 
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId())
+        {
+            case R.id.action_logout:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if(task.isSuccessful())
+                                {
+                                    startActivity(new Intent(Main_act.this,SignIn_act.class));
+                                    finish();
+                                }
+
+                            }
+                        });
+
+
+
+                default:
+                    return super.onOptionsItemSelected(item);
+
+
+
+        }
+
+
+
+
+
+    }
 
 }
