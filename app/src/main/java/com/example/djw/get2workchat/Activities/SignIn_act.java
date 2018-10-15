@@ -78,12 +78,15 @@ public class SignIn_act extends AppCompatActivity {
 
                     Intent i = new Intent(this, Main_act.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.putExtra("UserAuthId",FirebaseAuth.getInstance().getUid().toString());
                     startActivity(i);
+
                     pDialog.dismiss();
                 } else if (!isNewUser()) {
 
                     Intent i = new Intent(this, Main_act.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.putExtra("UserAuthId",FirebaseAuth.getInstance().getUid().toString());
                     startActivity(i);
                     pDialog.dismiss();
                 }

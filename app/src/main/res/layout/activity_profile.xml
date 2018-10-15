@@ -20,22 +20,22 @@
             android:background="@drawable/gradientbackground"
             android:orientation="vertical">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_picture"
                 android:layout_marginTop="35dp"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/wiwe"/>
+                android:src="@drawable/baseline_account_circle_black_18dp"/>
 
 
-            <TextView
+            <EditText
                 android:id="@+id/profile_name"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Kristian Wiwe "
+                android:hint="name"
                 android:textStyle="bold"
                 android:textSize="21sp"
                 android:textColor="#fff"
@@ -62,15 +62,16 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    app:srcCompat="@drawable/ic_email_black_24dp" />
+                    app:srcCompat="@drawable/baseline_work_24" />
 
-                <TextView
+                <EditText
+                    android:id="@+id/profile_professions"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
-                    android:text="Profession" />
+                    android:hint="Please Enter Professions" />
             </LinearLayout>
 
         <LinearLayout
@@ -83,14 +84,14 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 app:srcCompat="@drawable/ic_phone_android_black_24dp"/>
-            <TextView
+            <EditText
                 android:id="@+id/profile_phone_number"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                android:text="28346876" />
+               android:hint="Please enter phone number " />
         </LinearLayout>
 
         <LinearLayout
@@ -104,16 +105,24 @@
                 android:layout_height="36dp"
                 app:srcCompat="@drawable/ic_email_black_24dp"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/profile_email"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                android:text="wiwe123@hotmail.com" />
+                android:hint="Please enter email" />
         </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_save"
+        android:text="Save"
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

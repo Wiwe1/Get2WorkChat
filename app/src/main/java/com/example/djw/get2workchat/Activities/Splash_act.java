@@ -18,6 +18,7 @@ public class Splash_act extends AppCompatActivity {
         }else
         {
             Intent i = new Intent(this,Main_act.class);
+           // i.putExtra("UserAuthId",FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
             startActivity(i);
 
         }

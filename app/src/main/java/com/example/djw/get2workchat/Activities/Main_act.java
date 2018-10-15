@@ -9,8 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.djw.get2workchat.Data_Models.User;
+import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.Fragments.Calls_frag;
 import com.example.djw.get2workchat.Fragments.Chats_frag;
 import com.example.djw.get2workchat.Fragments.Contacts_frag;
@@ -27,19 +30,22 @@ import static android.app.PendingIntent.getActivity;
 
 public class Main_act extends AppCompatActivity {
 
+    private TextView txt;
     private TabLayout tab;
     private ViewPagerAdapter vPageAdapp;
     private ViewPager vPage;
     private User testUsr;
     private Toolbar tbar;
-
-
+    private String test;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+      //  test   = getIntent().getStringExtra("UserAuthId");
+
+
 
         tbar = (Toolbar)findViewById(R.id.toolbar);
         tab = (TabLayout) findViewById(R.id.tab_layout);
@@ -53,13 +59,16 @@ public class Main_act extends AppCompatActivity {
         tab.setupWithViewPager(vPage);
         setSupportActionBar(tbar);
 
+        DBUtil db = new DBUtil();
+        db.CreateChatroom("test");
+
       //  testUsr = new User("bob",null);
 
 
 //FirebaseDatabase database = FirebaseDatabase.getInstance();
      //DatabaseReference myRef = database.getReference("users");
    //     String userId = myRef.push().getKey();
-//        myRef.child(userId).setValue(testUsr);
+//        myRef.    child(userId).setValue(testUsr);
  //       myRef.push();
 
 
@@ -97,15 +106,15 @@ public class Main_act extends AppCompatActivity {
 
 
 
+            case R.id.action_profile:
+                   startActivity(new Intent(Main_act.this,Profile_Act.class));
+
                 default:
                     return super.onOptionsItemSelected(item);
 
 
 
         }
-
-
-
 
 
     }

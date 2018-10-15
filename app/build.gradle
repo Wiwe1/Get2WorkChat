@@ -35,7 +35,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-database:16.0.3'
     implementation 'com.google.firebase:firebase-auth:16.0.4'
+    implementation 'com.google.firebase:firebase-storage:16.0.3'
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
 
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    implementation ("com.github.bumptech.glide:glide:4.8.0@aar") {
+        transitive = true
+    }
 }
 apply plugin: 'com.google.gms.google-services'
