@@ -59,8 +59,8 @@ public class Main_act extends AppCompatActivity {
         tab.setupWithViewPager(vPage);
         setSupportActionBar(tbar);
 
-        DBUtil db = new DBUtil();
-        db.CreateChatroom("test");
+     DBUtil db = new DBUtil();
+
 
       //  testUsr = new User("bob",null);
 

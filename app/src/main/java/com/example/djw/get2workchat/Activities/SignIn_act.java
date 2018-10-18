@@ -12,13 +12,11 @@ import android.widget.Button;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.R;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUserMetadata;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,8 +75,8 @@ public class SignIn_act extends AppCompatActivity {
                     db.intCurrentUser();
 
                     Intent i = new Intent(this, Main_act.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.putExtra("UserAuthId",FirebaseAuth.getInstance().getUid().toString());
+                   // i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                 //   i.putExtra("UserAuthId",FirebaseAuth.getInstance().getUid().toString());
                     startActivity(i);
 
                     pDialog.dismiss();

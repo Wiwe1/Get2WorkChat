@@ -2,8 +2,8 @@ package com.example.djw.get2workchat.Data_Models;
 
 public class Chat_room {
 
-    private String id;
-    private String name;
+    public String id;
+    public String name;
 
 
     public Chat_room(String id, String name) {
