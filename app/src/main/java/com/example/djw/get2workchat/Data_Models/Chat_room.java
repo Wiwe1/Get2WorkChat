@@ -1,15 +1,20 @@
 package com.example.djw.get2workchat.Data_Models;
 
-public class Chat_room {
+import java.util.ArrayList;
+import java.util.List;
 
+public class Chat_room {
     public String id;
     public String name;
+    public List<String> UserIds = new ArrayList<String>();
 
 
-    public Chat_room(String id, String name) {
+    public Chat_room(String id, String name, List<String> userIds) {
         this.id = id;
         this.name = name;
+        UserIds = userIds;
     }
+
 
 
     public String getId() {

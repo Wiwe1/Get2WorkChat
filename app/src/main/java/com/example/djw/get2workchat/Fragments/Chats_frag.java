@@ -87,7 +87,7 @@ public class Chats_frag extends Fragment {
 
 
 
-                    rooms.add(new Chat_room(dsp.getKey(),dsp.child("name").getValue().toString()));
+                    rooms.add(new Chat_room(dsp.getKey(),dsp.child("name").getValue().toString(),null));
 
                 }
 

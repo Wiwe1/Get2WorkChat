@@ -20,7 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.List;
 import java.util.UUID;
 
 public class DBUtil {
@@ -32,9 +34,13 @@ public class DBUtil {
 
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
+    DatabaseReference test = db.getReference();
     DatabaseReference myref = db.getReference("users").child(auth.getCurrentUser().getUid());
     DatabaseReference chatrooms = db.getReference("chatrooms").push();
     DatabaseReference getChatRooms = db.getReference("chatrooms");
+    DatabaseReference addUsserChat = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
+
+
     public void intCurrentUser() {
 
         ValueEventListener valueEventListener = new ValueEventListener() {
@@ -104,16 +110,28 @@ public class DBUtil {
             ValueEventListener valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                   //If a chat room does not exsist, create it. Logs when completed
                     if(!dataSnapshot.exists()){
 
-                        final Chat_room room = new Chat_room(null,roomname.toString());
-                    chatrooms.setValue(room, new DatabaseReference.CompletionListener() {
+                        final Chat_room room = new Chat_room(null,roomname.toString(),null);
+
+                        List<String> userid = new ArrayList<String>();
+
+                        userid.add(auth.getCurrentUser().getUid().toString());
+
+                    chatrooms.setValue(new Chat_room(null,roomname,userid), new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                             Log.d("DB UTIL CREATED ROOM", "onComplete: createde chat room  "+room.getName());
                         }
                     });
 
+
+
+  //                      DatabaseReference groupmembers =db.getReference("chatrooms").child(chatrooms.getKey());
+//                        groupmembers.push().setValue(auth.getCurrentUser().getUid());
+                    //Addes the user to the chatroom he just created;
+                        addUsserChat.push().setValue(chatrooms.getKey());
 
                     }
                 }
@@ -130,14 +148,60 @@ public class DBUtil {
         chatrooms.addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public  void getRooms(ValueEventListener listener){
+    public void getRooms(ValueEventListener listener){
 
         getChatRooms.addValueEventListener( listener);
 
+    }
+
+
+    public  void getUserRooms(){
+
+        addUsserChat.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                String groupKey = dataSnapshot.getValue().toString();
+                test.child("chatrooms/"+groupKey+"/name").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(dataSnapshot.getValue().toString(),"User is member of this group");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            databaseError.getDetails();
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                databaseError.getDetails();
+            }
+        });
 
 
 
     }
+
 
 
 }
