@@ -28,7 +28,10 @@
         <activity
             android:name=".Activities.CreateRoom_act"
             android:theme="@style/AppThemeActionBar" />
-        <activity android:name=".Activities.Chat_room_act"></activity>
+        <activity android:name=".Activities.Chat_room_act"
+            android:theme="@style/AppThemeActionBar">
+
+        </activity>
     </application>
 
 </manifest>

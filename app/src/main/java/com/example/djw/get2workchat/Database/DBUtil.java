@@ -33,12 +33,18 @@ public class DBUtil {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
 
 
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-    DatabaseReference test = db.getReference();
-    DatabaseReference myref = db.getReference("users").child(auth.getCurrentUser().getUid());
-    DatabaseReference chatrooms = db.getReference("chatrooms").push();
-    DatabaseReference getChatRooms = db.getReference("chatrooms");
-    DatabaseReference addUsserChat = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
+    private  FirebaseAuth auth = FirebaseAuth.getInstance();
+    private DatabaseReference test = db.getReference();
+    private DatabaseReference myref = db.getReference("users").child(auth.getCurrentUser().getUid());
+    private    DatabaseReference chatrooms = db.getReference("chatrooms").push();DatabaseReference getChatRooms = db.getReference("chatrooms");
+    private    DatabaseReference addUsserChat = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
+    private     List<Chat_room> chtrom;
+
+public interface firebasCallback{
+
+    void OnCallBack(List<Chat_room> list);
+
+    }
 
 
     public void intCurrentUser() {
@@ -48,9 +54,7 @@ public class DBUtil {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(!dataSnapshot.exists()){
-
                         String Auth_id= auth.getUid();
-
                         User user = new User(auth.getCurrentUser().getDisplayName().toString(),auth.getCurrentUser().getEmail().toString(),null,null,null);
                         myref.setValue(user);
 
@@ -152,26 +156,35 @@ public class DBUtil {
 
         getChatRooms.addValueEventListener( listener);
 
+
     }
 
 
-    public  void getUserRooms(){
+    public  void getUserRooms(final firebasCallback firebasCallback){
+        chtrom = new ArrayList<Chat_room>();
 
         addUsserChat.addChildEventListener(new ChildEventListener() {
+
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                String groupKey = dataSnapshot.getValue().toString();
-                test.child("chatrooms/"+groupKey+"/name").addListenerForSingleValueEvent(new ValueEventListener() {
+                //    chtrom.clear();
+                final String groupKey = dataSnapshot.getValue().toString();
+                test.child("chatrooms/"+groupKey+"/name").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        chtrom.add(new Chat_room(groupKey,dataSnapshot.getValue().toString(),null));
+                        
                             Log.d(dataSnapshot.getValue().toString(),"User is member of this group");
+                            firebasCallback.OnCallBack(chtrom);
+
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            databaseError.getDetails();
+                                databaseError.getDetails();
                     }
                 });
             }

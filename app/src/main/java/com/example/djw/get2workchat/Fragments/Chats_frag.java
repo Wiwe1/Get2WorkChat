@@ -18,11 +18,15 @@ import com.example.djw.get2workchat.Activities.Chat_room_act;
 import com.example.djw.get2workchat.Activities.CreateRoom_act;
 import com.example.djw.get2workchat.Data_Models.Chat_room;
 import com.example.djw.get2workchat.Database.DBUtil;
+import com.example.djw.get2workchat.Database.DBUtil.firebasCallback;
 import com.example.djw.get2workchat.R;
 import com.example.djw.get2workchat.chatAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -35,9 +39,8 @@ public class Chats_frag extends Fragment {
     private DBUtil db;
     private RecyclerView chatRooms;
     private chatAdapter chatAdapter;
-    private static final String room_id ="room_id";
-    private  static  final String room_name ="room_name";
-
+    private static final String room_id = "room_id";
+    private static final String room_name = "room_name";
 
     public Chats_frag() {
     }
@@ -46,9 +49,9 @@ public class Chats_frag extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-          v = inflater.inflate(R.layout.frag_chats,container,false);
+        v = inflater.inflate(R.layout.frag_chats, container, false);
 
-          db = new DBUtil();
+             db = new DBUtil();
 
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.create_room);
@@ -58,26 +61,40 @@ public class Chats_frag extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent I =new Intent(getActivity(),CreateRoom_act.class);
+                Intent I = new Intent(getActivity(), CreateRoom_act.class);
                 startActivity(I);
                 Log.d("floating click", "onClick: .");
 
             }
         });
 
+
         chatRooms = v.findViewById(R.id.rooms);
         chatRooms.setLayoutManager(new LinearLayoutManager(getActivity()));
-        getChatrooms();
+
+        db.getUserRooms(new firebasCallback() {
+            @Override
+            public void OnCallBack(List<Chat_room> list) {
+                Log.d("CALLBACK",list.toString());
+                chatAdapter = new chatAdapter(getContext(),list,listener);
+                chatRooms.setAdapter(chatAdapter);
+
+
+            }
+        });
+
+       // getChatrooms();
 
         return v;
     }
 
     // Gets all Chatrooms(Names+ID's) from Firebase node Chatrooms and sets the adapter for the recycleView
+
             private void getChatrooms(){
 
                 final List<Chat_room> rooms = new ArrayList<>();
 
-        db.getRooms(new ValueEventListener() {
+            db.getRooms(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 rooms.clear();
@@ -106,17 +123,21 @@ public class Chats_frag extends Fragment {
 
     }
 
-    chatAdapter.OnChatRoomClick listener = new chatAdapter.OnChatRoomClick() {
-        @Override
-        public void onClick(Chat_room chat_room){
 
-                Intent i = new Intent(getActivity(),Chat_room_act.class);
-                i.putExtra(Chats_frag.room_id,chat_room.getId());
-                i.putExtra(Chats_frag.room_name,chat_room.getName());
-                startActivity(i)    ;
-            Toast.makeText(getContext(), "Clicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
 
-        }
-    };
+        chatAdapter.OnChatRoomClick listener = new chatAdapter.OnChatRoomClick() {
+            @Override
+            public void onClick(Chat_room chat_room) {
+
+                Intent i = new Intent(getActivity(), Chat_room_act.class);
+                i.putExtra(Chats_frag.room_id, chat_room.getId());
+                i.putExtra(Chats_frag.room_name, chat_room.getName());
+                startActivity(i);
+                Toast.makeText(getContext(), "Clicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
+
+            }
+        };
+
 
 }
+

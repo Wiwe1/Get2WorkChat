@@ -61,7 +61,7 @@ public class Main_act extends AppCompatActivity {
 
      DBUtil db = new DBUtil();
 
-     db.getUserRooms();
+   //  db.getUserRooms();
 
 
       //  testUsr = new User("bob",null);
