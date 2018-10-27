@@ -50,25 +50,17 @@ public class Chats_frag extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.frag_chats, container, false);
-
              db = new DBUtil();
-
-
-        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.create_room);
-
-
+        FloatingActionButton fab =  v.findViewById(R.id.create_room);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent I = new Intent(getActivity(), CreateRoom_act.class);
                 startActivity(I);
                 Log.d("floating click", "onClick: .");
 
             }
         });
-
-
         chatRooms = v.findViewById(R.id.rooms);
         chatRooms.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -82,8 +74,6 @@ public class Chats_frag extends Fragment {
 
             }
         });
-
-       // getChatrooms();
 
         return v;
     }

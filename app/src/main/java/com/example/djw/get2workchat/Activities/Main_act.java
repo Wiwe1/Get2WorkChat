@@ -47,9 +47,9 @@ public class Main_act extends AppCompatActivity {
 
 
 
-        tbar = (Toolbar)findViewById(R.id.toolbar);
-        tab = (TabLayout) findViewById(R.id.tab_layout);
-        vPage = (ViewPager) findViewById(R.id.viewpage);
+        tbar = findViewById(R.id.toolbar);
+        tab =  findViewById(R.id.tab_layout);
+        vPage =  findViewById(R.id.viewpage);
         vPageAdapp = new ViewPagerAdapter(getSupportFragmentManager());
 
         vPageAdapp.AddFragment(new Chats_frag(),"Chats ");
@@ -60,6 +60,7 @@ public class Main_act extends AppCompatActivity {
         setSupportActionBar(tbar);
 
      DBUtil db = new DBUtil();
+
 
    //  db.getUserRooms();
 

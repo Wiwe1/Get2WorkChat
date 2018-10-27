@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Get2WorkChat</string>
+    <string name="addPeople_dialog_hint">Skriv emailadressen på den du vil tilføje</string>
+    <string name="addPeople_dialog_add">Add</string>
+    <string name="addPeople_dialog_cancel">Cancel</string>
+    <string name="addPeople_dialog_title">Tilføj person</string>
+    <string name="send_message_hint">Type a message&#8230;</string>
+    <string name="send_message_error">Please enter a message</string>
+    <string name="send_message_failed">Failed to send your message</string>
 </resources>

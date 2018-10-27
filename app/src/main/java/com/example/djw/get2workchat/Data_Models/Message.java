@@ -2,39 +2,32 @@ package com.example.djw.get2workchat.Data_Models;
 
 public class Message {
 
-
-    private String Message;
-    private String timestamp;
+   // private String senderName;
+    private  String id;
     private String senderId;
-    private String url;
-    private String image;
-    private String Chatroom_id;
+    private String chatroom_id;
+    private String message;
+    private Long sent;
 
-
-    public Message(String message, String timestamp, String senderId, String url, String image, String chatroom_id) {
-        this.Message = message;
-        this.timestamp = timestamp;
+    public Message(String id, String senderId, String chatroom_id, String message, Long sent) {
+        this.id = id;
         this.senderId = senderId;
-        this.url = url;
-        this.image = image;
-        this.Chatroom_id = chatroom_id;
+        this.chatroom_id = chatroom_id;
+        this.message = message;
+        this.sent = sent;
     }
 
+    public  Message(){
 
-    public String getMessage() {
-        return Message;
+
     }
 
-    public void setMessage(String message) {
-        Message = message;
+    public String getId() {
+        return id;
     }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getSenderId() {
@@ -45,28 +38,36 @@ public class Message {
         this.senderId = senderId;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getChatroom_id() {
-        return Chatroom_id;
+        return chatroom_id;
     }
 
     public void setChatroom_id(String chatroom_id) {
-        Chatroom_id = chatroom_id;
+        this.chatroom_id = chatroom_id;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Long getSent() {
+        return sent;
+    }
+
+    public void setSent(Long sent) {
+        this.sent = sent;
+    }
+
+
+    //  private String timestamp;
+    //private String url;
+   // private String image;
+
+
+
 }
 

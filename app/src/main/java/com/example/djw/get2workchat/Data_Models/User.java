@@ -5,19 +5,39 @@ import java.util.List;
 public class User {
 
 
-    private  String userName,
-                    email,
-                    phone_number,
-                    profession,
-                    profilePicturePath;
+    private  String userName;
+    private String email;
+    private String phone_number;
+    private String profession;
+    private String profilePicturePath;
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    private String userid;
     public User() {
     }
-public User(String userName, String email, String phone_number, String profession, String profilePicturePath) {
+public User(String userid,String userName, String email, String phone_number, String profession, String profilePicturePath) {
+            this.userid = userid;
             this.userName = userName;
             this.email = email;
             this.phone_number = phone_number;
             this.profession = profession;
             this.profilePicturePath = profilePicturePath;
+
         }
 
     public String getProfilePicturePath() {
