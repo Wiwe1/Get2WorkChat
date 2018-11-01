@@ -7,19 +7,29 @@ public class Message {
     private String senderId;
     private String chatroom_id;
     private String message;
+    private String type;
     private Long sent;
 
-    public Message(String id, String senderId, String chatroom_id, String message, Long sent) {
+    public Message(String id, String senderId, String chatroom_id, String message,String type, Long sent) {
         this.id = id;
         this.senderId = senderId;
         this.chatroom_id = chatroom_id;
         this.message = message;
         this.sent = sent;
+        this.type = type;
     }
 
     public  Message(){
 
 
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getId() {

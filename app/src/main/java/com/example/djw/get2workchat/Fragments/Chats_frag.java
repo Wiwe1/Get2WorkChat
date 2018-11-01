@@ -122,6 +122,7 @@ public class Chats_frag extends Fragment {
                 Intent i = new Intent(getActivity(), Chat_room_act.class);
                 i.putExtra(Chats_frag.room_id, chat_room.getId());
                 i.putExtra(Chats_frag.room_name, chat_room.getName());
+
                 startActivity(i);
                 Toast.makeText(getContext(), "Clicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
 

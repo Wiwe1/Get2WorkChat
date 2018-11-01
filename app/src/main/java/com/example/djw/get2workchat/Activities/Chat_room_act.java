@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,23 +25,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.djw.get2workchat.Data_Models.Message;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.MessageRecyclerAdapter;
 import com.example.djw.get2workchat.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Chat_room_act extends AppCompatActivity {
    // private static  final String CURRENT_USER ="CURRENT_USR";
     private static final String room_id = "room_id";
     private static final String room_name = "room_name";
+    private Uri resulturi;
+    private String profilePicturePath;
     private String roomId;
     private String roomName;
     private DBUtil db;
@@ -48,6 +60,7 @@ private String userId;
 private EditText txtMessage;
 private ImageButton sendMessage;
 private ImageView SendImageMessage;
+private ImageView message_image;
 private RecyclerView recyclerMesseges;
 private MessageRecyclerAdapter messageRecyclerAdapter;
 
@@ -58,11 +71,15 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room_act);
-        txtMessage = findViewById(R.id.send_message_text);
-        sendMessage = findViewById(R.id.send_message);
+      txtMessage = findViewById(R.id.send_message_text);
+         sendMessage = findViewById(R.id.send_message);
         SendImageMessage= findViewById(R.id.send_message_image);
+
         recyclerMesseges = findViewById(R.id.chat_messages);
+      //  recyclerMesseges.setHasFixedSize(true);
+
         LinearLayoutManager manager =new LinearLayoutManager(this);
+
        // manager.setReverseLayout(true);
             recyclerMesseges.setLayoutManager(manager);
         db= new DBUtil();
@@ -90,7 +107,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                startActivityForResult(intent, 1);
+                startActivityForResult(Intent.createChooser(intent,"Vælg et billede"), 1);
 
             }
         }) ;
@@ -108,6 +125,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
             }
         });
+
        getTextMesseges();
     }
 
@@ -141,14 +159,15 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     private void sendMessageRoom(){
 
         String senderName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName().toString();
+        String type = "text";
         String message = txtMessage.getText().toString();
         txtMessage.setText("");
-        sendMessage.setEnabled(false);
+        sendMessage.setEnabled(true);
 
-        db.sendMessageChatRoom(roomId, userId, message, new DatabaseReference.CompletionListener() {
+        db.sendMessageChatRoom(roomId, userId, message,type, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                sendMessage.setEnabled(true);
+              //  sendMessage.setEnabled(true);
             }
         });
 
@@ -158,24 +177,30 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
     public void getTextMesseges(){
 
+         final List<Message> msgList = new ArrayList<>();
 
         db.getMessegesFromRoom(roomId, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                List<Message> msgList = new ArrayList<>();
+                  msgList.clear();
                         for(DataSnapshot dsp: dataSnapshot.getChildren()){
 
-String message = dsp.child("message").getValue().toString();
+
 
                             Log.d("SENDERID","onDataChange: MESSAGE"+ dsp.child("sender_id").getValue().toString());
 
-                   msgList.add(new Message(dsp.getKey().toString(),dsp.child("sender_id").getValue().toString(),dsp.child("chat_room_id").toString() ,dsp.child("message").getValue().toString(),null));
+                   msgList.add(new Message(dsp.getKey().toString(),dsp.child("sender_id").getValue().toString(),dsp.child("chat_room_id").toString() ,dsp.child("message").getValue().toString(),dsp.child("type").getValue().toString(),null));
 
                         }
 
-                        messageRecyclerAdapter = new MessageRecyclerAdapter(msgList,userId);
+                        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
+
+//                        messageRecyclerAdapter.setHasStableIds(true);
+
+
                     recyclerMesseges.setAdapter(messageRecyclerAdapter);
+
             }
 
             @Override
@@ -194,8 +219,46 @@ String message = dsp.child("message").getValue().toString();
 
 
             final Uri imageuri = data.getData();
-            //resulturi = imageuri;
-            //profile_image.setImageURI(resulturi);
+            resulturi = imageuri;
+            String type = "image";
+            UUID uuid = UUID.randomUUID();
+            final StorageReference filepath =   FirebaseStorage.getInstance().getReference().child(roomId).child(uuid.toString());
+            filepath.putFile(imageuri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            //  Map newImage = new HashMap();
+                            //newImage.put("profileImageUrl", uri.toString());
+                            String type = "image";
+
+                            db.sendMessageChatRoom(roomId, userId, uri.toString(),type, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                                }
+                            });
+
+
+
+
+                            return;
+                        }
+
+
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            finish();
+                            return;
+                        }
+                    });
+
+
+                }
+            });
 
         }
     }
@@ -204,27 +267,29 @@ String message = dsp.child("message").getValue().toString();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.addPeople_dialog_title);
+        // Setups up a dialo window for adding new people.
+
         LayoutInflater inflater = this.getLayoutInflater();
-
-            // Setups up a dialo window for adding new people.
-        builder.setView(inflater.inflate(R.layout.dialog_add_people,null))
-                .setPositiveButton(R.string.addPeople_dialog_add, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        TextView addEmail =  findViewById(R.id.dialog_name);
-                        if(addEmail.getText() !=null){
-
-                            db.addUserToRoom(addEmail.getText().toString(),roomId);
+        View dialogView = inflater.inflate(R.layout.dialog_add_people, null);
+        builder.setView(dialogView);
+        builder.setTitle(R.string.addPeople_dialog_title);
+        EditText editText = (EditText) dialogView.findViewById(R.id.dialog_name);
 
 
-                        }
-                    }
-                }).setNegativeButton(R.string.addPeople_dialog_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            builder.setPositiveButton(R.string.addPeople_dialog_add, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-            }
-        }).create().show();
+                }
+            }).setNegativeButton(R.string.addPeople_dialog_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+
+
 
     }
 

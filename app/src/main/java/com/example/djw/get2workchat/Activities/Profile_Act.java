@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.R;
@@ -135,7 +136,7 @@ public class Profile_Act extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             //  Map newImage = new HashMap();
                             //newImage.put("profileImageUrl", uri.toString());
-                            // /mDriverDatabase.updateChildren(newImage);
+
 
                             db.updateUser(null, null, null, null, uri.toString());
                             finish();

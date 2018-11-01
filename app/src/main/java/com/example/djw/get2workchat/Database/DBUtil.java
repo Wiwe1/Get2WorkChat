@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class DBUtil {
     private  FirebaseAuth auth = FirebaseAuth.getInstance();
     private DatabaseReference test = db.getReference();
     private  DatabaseReference user = db.getReference().child("users");
+
     private DatabaseReference myref = db.getReference("users").child(auth.getCurrentUser().getUid());
     private    DatabaseReference chatrooms = db.getReference("chatrooms").push();
     private  DatabaseReference getChatRooms = db.getReference("chatrooms");
@@ -81,7 +83,14 @@ public interface firebasCallback{
     }
 
 
+    public void getUserById(String Userid, ValueEventListener valueEventListener){
 
+         DatabaseReference getUser = db.getReference().child("users").child(Userid);
+
+         getUser.addValueEventListener(valueEventListener);
+
+
+    }
 
 
     public void updateUser(final String name, final String email, final String phone_number, final String prof, final String ProfilePicturePath)
@@ -194,6 +203,7 @@ public interface firebasCallback{
                     addUsserChat.push().setValue(roomid);
 
 
+
                 }
 
             }
@@ -270,7 +280,7 @@ public interface firebasCallback{
 
     }
 
-    public void sendMessageChatRoom(String roomid, String senderId, final String message, DatabaseReference.CompletionListener completionListener){
+    public void sendMessageChatRoom(String roomid, String senderId, final String message,final String type, DatabaseReference.CompletionListener completionListener){
 
 
         Map<String,Object> mapMessage = new HashMap<>();
@@ -278,7 +288,8 @@ public interface firebasCallback{
         mapMessage.put("chat_room_id",roomid);
         mapMessage.put("sender_id",senderId);
         mapMessage.put("message",message);
-        mapMessage.put("sent",System.currentTimeMillis());
+        mapMessage.put("type",type);
+        mapMessage.put("sent",ServerValue.TIMESTAMP);
         messages.setValue(mapMessage, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {

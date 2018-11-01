@@ -22,8 +22,12 @@ import com.example.djw.get2workchat.ViewPagerAdapter;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -64,6 +68,17 @@ public class Main_act extends AppCompatActivity {
 
    //  db.getUserRooms();
 
+        db.getUserById("test", new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
       //  testUsr = new User("bob",null);
 
