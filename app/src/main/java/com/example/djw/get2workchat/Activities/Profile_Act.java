@@ -38,6 +38,8 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
 public class Profile_Act extends AppCompatActivity {
@@ -134,8 +136,8 @@ public class Profile_Act extends AppCompatActivity {
                     filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            //  Map newImage = new HashMap();
-                            //newImage.put("profileImageUrl", uri.toString());
+                             Map newImage = new HashMap();
+                            newImage.put("profilePicturePath", uri.toString());
 
 
                             db.updateUser(null, null, null, null, uri.toString());
@@ -157,6 +159,9 @@ public class Profile_Act extends AppCompatActivity {
 
     }
 
+
+
+
     private void getUserDetails() {
 
         myref.addValueEventListener(new ValueEventListener() {
@@ -164,14 +169,31 @@ public class Profile_Act extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
 
-                    User user = dataSnapshot.getValue(User.class);
+                    //    User user = dataSnapshot.getValue(User.class);
+                    Map<String, Object> UserInfo = (Map<String, Object>) dataSnapshot.getValue();
+                    if (UserInfo.get("userName") != null) {
+                        String UserNmame = UserInfo.get("userName").toString();
+                        profile_name.setText(UserNmame);
+                    }
+                    if (UserInfo.get("email") != null) {
+                        String email = UserInfo.get("email").toString();
+                        profile_email.setText(email);
+                    }
+                    if (UserInfo.get("profilePicturePath") != null) {
+                        String profilepicture = UserInfo.get("profilePicturePath").toString();
+                        Glide.with(getApplication()).load(profilepicture).into(profile_image);
+
+                    /*
+
                     profile_name.setText(user.getUserName());
                     profile_email.setText(user.getEmail());
                     profile_phone.setText(user.getPhone_number());
                     profilePicturePath = user.getProfilePicturePath();
-                    profile_profession.setText(user.getProfression());
-                    Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
+                    profile_profession.setText(user.getProfession());
+                   */
+                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
 
+                    }
                 }
             }
 

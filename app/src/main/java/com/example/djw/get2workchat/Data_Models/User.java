@@ -11,27 +11,12 @@ public class User {
     private String profession;
     private String profilePicturePath;
 
-    public String getProfession() {
-        return profession;
-    }
 
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
 
-    public String getUserid() {
-        return userid;
-    }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
 
-    private String userid;
-    public User() {
-    }
-public User(String userid,String userName, String email, String phone_number, String profession, String profilePicturePath) {
-            this.userid = userid;
+public User(String userName, String email, String phone_number, String profession, String profilePicturePath) {
+
             this.userName = userName;
             this.email = email;
             this.phone_number = phone_number;
@@ -39,30 +24,9 @@ public User(String userid,String userName, String email, String phone_number, St
             this.profilePicturePath = profilePicturePath;
 
         }
-
-    public String getProfilePicturePath() {
-        return profilePicturePath;
+    public User() {
     }
 
-    public void setProfilePicturePath(String profilePicturePath) {
-        this.profilePicturePath = profilePicturePath;
-    }
-
-    public String getPhone_number() {
-        return phone_number;
-    }
-
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
-    }
-
-    public String getProfression() {
-        return profession;
-    }
-
-    public void setProfression(String profression) {
-        this.profession = profression;
-    }
 
     public String getUserName() {
         return userName;
@@ -78,5 +42,29 @@ public User(String userid,String userName, String email, String phone_number, St
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone_number() {
+        return phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
     }
 }

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.djw.get2workchat.Data_Models.Message;
@@ -70,7 +69,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
         Message message = messages.get(i);
 
-        db.getUserById(messages.get(i).getSenderId().toString(), new ValueEventListener() {
+        db.getUserById(messages.get(i).getSender_id().toString(), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -98,15 +97,17 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
             case SENT:
                 Log.d("TYPE","MESSAGETYPE"+messages.get(i).getMessage().toString());
+                SendMessageHolder vh = (SendMessageHolder) viewHolder;
                 if(messages.get(i).getType().equals("text")){
-
-                        ((SendMessageHolder) viewHolder ).bind(messages.get(viewHolder.getAdapterPosition()));
-
+                    vh.imagemessage.setVisibility(View.GONE);
+                    vh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
+                   // vh.imagemessage.setVisibility(View.GONE);
                 }
-
                 else if(messages.get(i).getType().equals("image")){
-
-                    glide.load(messages.get(i).getMessage().toString()).into(((SendMessageHolder)viewHolder).imagemessage);
+                    vh.textmessage.setText("");
+                    vh.imagemessage.setVisibility(View.VISIBLE);
+                    vh.imagemessage.setImageResource(0);
+                    glide.load(messages.get(viewHolder.getAdapterPosition()).getMessage().toString()).into(vh.imagemessage);
 
                     // String url = messages.get(i).getMessage().toString().trim();
                 }
@@ -114,14 +115,19 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
 
             case RECEIVED:
-
+                ReceivedMessageHolder receivedVh = (ReceivedMessageHolder)viewHolder;
                 if(messages.get(i).getType().equals("text")){
-                    ((ReceivedMessageHolder)viewHolder).bind(messages.get(i));
+                    receivedVh.imagemessage.setVisibility(View.GONE);
+                    receivedVh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
+                  //  ((ReceivedMessageHolder)viewHolder).bind(messages.get(i));
                     break;
                 }else if (messages.get(i).getType().equals("image")){
 
+                    receivedVh.textmessage.setText("");
+                    receivedVh.imagemessage.setVisibility(View.VISIBLE);
+                    receivedVh.imagemessage.setImageResource(0);
 
-                        glide.load(messages.get(i).getMessage().toString()).into(((ReceivedMessageHolder)viewHolder).imagemessage);
+                        glide.load(messages.get(i).getMessage().toString()).into(receivedVh.imagemessage);
                         break;
 
                     }
@@ -142,13 +148,13 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
 
-        if(messages.get(position).getSenderId().contentEquals(userId)){
+        if(messages.get(position).getSender_id().contentEquals(userId)){
 
-            Log.d("SENDERID ", "getItemViewType: " + messages.get(position).getSenderId().toString());
+            Log.d("SENDERID ", "getItemViewType: " + messages.get(position).getSender_id().toString());
             return SENT;
 
         }else{
-            Log.d("SENDERID ", "getItemViewType: " + messages.get(position).getSenderId().toString());
+            Log.d("SENDERID ", "getItemViewType: " + messages.get(position).getSender_id().toString());
             return  RECEIVED;
 
         }
@@ -172,14 +178,6 @@ class SendMessageHolder extends RecyclerView.ViewHolder {
         textmessage = itemView.findViewById(R.id.text_message_send);
 
     }
-
-
-    void bind(Message message){
-
-        textmessage.setText(message.getMessage());
-
-    }
-
 
 
 }

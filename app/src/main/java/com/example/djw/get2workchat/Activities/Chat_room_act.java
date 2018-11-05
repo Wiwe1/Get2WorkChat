@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -63,7 +64,7 @@ private ImageView SendImageMessage;
 private ImageView message_image;
 private RecyclerView recyclerMesseges;
 private MessageRecyclerAdapter messageRecyclerAdapter;
-
+    private final List<Message> msgList = new ArrayList<>();
 
 
 
@@ -75,16 +76,16 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
          sendMessage = findViewById(R.id.send_message);
         SendImageMessage= findViewById(R.id.send_message_image);
 
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         recyclerMesseges = findViewById(R.id.chat_messages);
-      //  recyclerMesseges.setHasFixedSize(true);
-
         LinearLayoutManager manager =new LinearLayoutManager(this);
-
+        recyclerMesseges.setLayoutManager(manager);
+        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
        // manager.setReverseLayout(true);
-            recyclerMesseges.setLayoutManager(manager);
+            recyclerMesseges.setAdapter(messageRecyclerAdapter);
         db= new DBUtil();
 
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         // Gets the RoomId and Name passed via an Intent from the fragment.
         Bundle extras = getIntent().getExtras();
 
@@ -162,12 +163,12 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         String type = "text";
         String message = txtMessage.getText().toString();
         txtMessage.setText("");
-        sendMessage.setEnabled(true);
+        sendMessage.setEnabled(false);
 
         db.sendMessageChatRoom(roomId, userId, message,type, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-              //  sendMessage.setEnabled(true);
+               sendMessage.setEnabled(true);
             }
         });
 
@@ -177,24 +178,55 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
     public void getTextMesseges(){
 
-         final List<Message> msgList = new ArrayList<>();
+        // final List<Message> msgList = new ArrayList<>();
 
+
+                db.getMessegesFromRoom(roomId, new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Message message = dataSnapshot.getValue(Message.class);
+                        msgList.add(message);
+                            messageRecyclerAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        /*
         db.getMessegesFromRoom(roomId, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                  msgList.clear();
+               //   msgList.clear();
                         for(DataSnapshot dsp: dataSnapshot.getChildren()){
 
 
 
                             Log.d("SENDERID","onDataChange: MESSAGE"+ dsp.child("sender_id").getValue().toString());
 
-                   msgList.add(new Message(dsp.getKey().toString(),dsp.child("sender_id").getValue().toString(),dsp.child("chat_room_id").toString() ,dsp.child("message").getValue().toString(),dsp.child("type").getValue().toString(),null));
+                   //msgList.add(new Message(dsp.getKey().toString(),dsp.child("sender_id").getValue().toString(),dsp.child("chat_room_id").toString() ,dsp.child("message").getValue().toString(),dsp.child("type").getValue().toString(),null));
 
                         }
 
-                        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
+                       // messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
 
 //                        messageRecyclerAdapter.setHasStableIds(true);
 
@@ -209,7 +241,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             }
         });
 
-
+*/
     }
 
     @Override

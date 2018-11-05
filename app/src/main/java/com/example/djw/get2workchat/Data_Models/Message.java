@@ -2,34 +2,33 @@ package com.example.djw.get2workchat.Data_Models;
 
 public class Message {
 
-   // private String senderName;
-    private  String id;
-    private String senderId;
-    private String chatroom_id;
+    // private String senderName;
+    private String id;
+    private String sender_id;
+    private String chat_room_id;
     private String message;
     private String type;
     private Long sent;
+    private Long messageNumber;
 
-    public Message(String id, String senderId, String chatroom_id, String message,String type, Long sent) {
+    public Message(String id, String sender_id, String chat_room_id, String message, String type, Long sent, Long messageNumber) {
         this.id = id;
-        this.senderId = senderId;
-        this.chatroom_id = chatroom_id;
+        this.sender_id = sender_id;
+        this.chat_room_id = chat_room_id;
         this.message = message;
         this.sent = sent;
         this.type = type;
+        this.messageNumber = messageNumber;
     }
 
-    public  Message(){
+    public Message() {
 
 
-    }
+        //  private String timestamp;
+        //private String url;
+        // private String image;
 
-    public String getType() {
-        return type;
-    }
 
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getId() {
@@ -40,20 +39,20 @@ public class Message {
         this.id = id;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public String getSender_id() {
+        return sender_id;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
+    public void setSender_id(String sender_id) {
+        this.sender_id = sender_id;
     }
 
-    public String getChatroom_id() {
-        return chatroom_id;
+    public String getChat_room_id() {
+        return chat_room_id;
     }
 
-    public void setChatroom_id(String chatroom_id) {
-        this.chatroom_id = chatroom_id;
+    public void setChat_room_id(String chat_room_id) {
+        this.chat_room_id = chat_room_id;
     }
 
     public String getMessage() {
@@ -64,6 +63,14 @@ public class Message {
         this.message = message;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Long getSent() {
         return sent;
     }
@@ -72,12 +79,11 @@ public class Message {
         this.sent = sent;
     }
 
+    public Long getMessageNumber() {
+        return messageNumber;
+    }
 
-    //  private String timestamp;
-    //private String url;
-   // private String image;
-
-
-
+    public void setMessageNumber(Long messageNumber) {
+        this.messageNumber = messageNumber;
+    }
 }
-

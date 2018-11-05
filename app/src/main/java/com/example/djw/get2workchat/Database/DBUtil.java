@@ -18,8 +18,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public interface firebasCallback{
 
                 if(!dataSnapshot.exists()){
                         String Auth_id= auth.getUid();
-                        User user = new User(null,auth.getCurrentUser().getDisplayName().toString(),auth.getCurrentUser().getEmail().toString(),null,null,null);
+                        User user = new User(auth.getCurrentUser().getDisplayName().toString(),auth.getCurrentUser().getEmail().toString(),null,null,null);
                         myref.setValue(user);
 
                 }
@@ -100,18 +102,21 @@ public interface firebasCallback{
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                    HashMap userInfo = new HashMap();
+
+
                     User user = dataSnapshot.getValue(User.class);
                    if( name!=null)
-                    user.setUserName(name);
+                  userInfo.put("userName",name);
                    if ( email!=null)
-                           user.setEmail(email);
+                       userInfo.put("email",email);
                    if(  phone_number!=null)
-                   user.setPhone_number(phone_number);
+                       userInfo.put("phone_number",phone_number);;
                    if(  prof !=null)
-                   user.setProfression(prof);
+                       userInfo.put("profession",prof);
                    if(ProfilePicturePath!= null)
-                       user.setProfilePicturePath(ProfilePicturePath);
-                    myref.setValue(user);
+                       userInfo.put("profilePicturePath",ProfilePicturePath);
+                    myref.updateChildren(userInfo);
                 }
 
                 @Override
@@ -280,31 +285,86 @@ public interface firebasCallback{
 
     }
 
-    public void sendMessageChatRoom(String roomid, String senderId, final String message,final String type, DatabaseReference.CompletionListener completionListener){
+    public void sendMessageChatRoom(final String roomid, final String senderId, final String message, final String type, DatabaseReference.CompletionListener completionListener){
 
+             messages.runTransaction(new Transaction.Handler() {
+                 @NonNull
+                 @Override
+                 public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                     long value2= 0;
+                     long value = currentData.getValue(Long.class);
+                     if(currentData.getValue()!=null){
+                         currentData.setValue(0);
+                     }
+                     else {
+                        value2 = (Long) currentData.getValue();
+
+
+                     }
+                     value2++;
+
+                            currentData.setValue(value2);
+
+
+
+                            Log.d("transaction value ","test af transaction"+ value2);
+
+                     return  Transaction.success(currentData);
+                }
+
+                 @Override
+                 public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                 }
+             });
 
         Map<String,Object> mapMessage = new HashMap<>();
+
 
         mapMessage.put("chat_room_id",roomid);
         mapMessage.put("sender_id",senderId);
         mapMessage.put("message",message);
         mapMessage.put("type",type);
         mapMessage.put("sent",ServerValue.TIMESTAMP);
+        //mapMessage.put("message_number",);
         messages.setValue(mapMessage, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 Log.d("MESSAGE","MESSAGE SENT" + message);
-              //  Log.d("DATABASEERROR","ERROR: "+databaseError.getDetails().toString());
+           //     Log.d("DATABASEERROR","ERROR: "+databaseError.getDetails().toString());
+            }
+        });
+
+    }
+
+    public void updateCount(DatabaseReference database){
+        database.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+
+                if(mutableData.getValue() == null){
+                    mutableData.setValue(1);
+                }
+                else{
+                    mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+
             }
         });
     }
 
-    public void getMessegesFromRoom(String roomid, ValueEventListener listener){
+    public void getMessegesFromRoom(String roomid, ChildEventListener listener){
 
-    Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
-
-
-        getMesseges.addValueEventListener(listener);
+   Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
+      //  Query   getMesseges = db.getReference("messeges").startAt("chat_room_id",roomid );
+        getMesseges.addChildEventListener(listener);
 
 
     }
