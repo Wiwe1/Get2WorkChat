@@ -43,11 +43,13 @@ public class Main_act extends AppCompatActivity {
     private String test;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
       //  test   = getIntent().getStringExtra("UserAuthId");
+
 
 
 
@@ -65,7 +67,7 @@ public class Main_act extends AppCompatActivity {
 
      DBUtil db = new DBUtil();
 
-
+//db.updateCount("");
    //  db.getUserRooms();
 
         db.getUserById("test", new ValueEventListener() {

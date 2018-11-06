@@ -39,6 +39,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -65,7 +66,12 @@ private ImageView message_image;
 private RecyclerView recyclerMesseges;
 private MessageRecyclerAdapter messageRecyclerAdapter;
     private final List<Message> msgList = new ArrayList<>();
+    private FirebaseDatabase dbtest = FirebaseDatabase.getInstance();
 
+    private int testcount =0;
+
+    private  FirebaseAuth auth = FirebaseAuth.getInstance();
+  //  private DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("messeges").push();;
 
 
     @Override
@@ -101,6 +107,11 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         if(getSupportActionBar()!=null){
             setTitle(roomName);
         }
+
+
+        DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("count");
+
+       //db.updateCount(hej);
 
         SendImageMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,12 +174,12 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         String type = "text";
         String message = txtMessage.getText().toString();
         txtMessage.setText("");
-        sendMessage.setEnabled(false);
+        sendMessage.setEnabled(true);
 
         db.sendMessageChatRoom(roomId, userId, message,type, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-               sendMessage.setEnabled(true);
+           //    sendMessage.setEnabled(true);
             }
         });
 

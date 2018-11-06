@@ -38,6 +38,7 @@ public class DBUtil {
 
      private    FirebaseDatabase db = FirebaseDatabase.getInstance();
 
+     private int testcount =0;
 
     private  FirebaseAuth auth = FirebaseAuth.getInstance();
     private DatabaseReference test = db.getReference();
@@ -286,7 +287,7 @@ public interface firebasCallback{
     }
 
     public void sendMessageChatRoom(final String roomid, final String senderId, final String message, final String type, DatabaseReference.CompletionListener completionListener){
-
+/*
              messages.runTransaction(new Transaction.Handler() {
                  @NonNull
                  @Override
@@ -317,39 +318,51 @@ public interface firebasCallback{
 
                  }
              });
-
+*/
         Map<String,Object> mapMessage = new HashMap<>();
 
-
+        final DatabaseReference messagesTest = db.getReference("chatrooms").child(roomid).child("messeges").push();
+        final DatabaseReference messagesTest2 = db.getReference("chatrooms").child(roomid).child("messeges");
+        final DatabaseReference messagesNumberTest = db.getReference("chatrooms").child(roomid).child("count");
         mapMessage.put("chat_room_id",roomid);
         mapMessage.put("sender_id",senderId);
         mapMessage.put("message",message);
         mapMessage.put("type",type);
         mapMessage.put("sent",ServerValue.TIMESTAMP);
-        //mapMessage.put("message_number",);
-        messages.setValue(mapMessage, new DatabaseReference.CompletionListener() {
+    //    mapMessage.put("message_number",testcount);
+   //     testcount   = testcount+1;
+        messagesTest.setValue(mapMessage, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 Log.d("MESSAGE","MESSAGE SENT" + message);
            //     Log.d("DATABASEERROR","ERROR: "+databaseError.getDetails().toString());
+
+
             }
         });
-
+        updateCount(messagesTest,messagesTest.getKey().toString());
     }
 
-    public void updateCount(DatabaseReference database){
+    public void updateCount(final DatabaseReference database, final String key){
         database.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
+
 
 
                 if(mutableData.getValue() == null){
                     mutableData.setValue(1);
                 }
                 else{
+
+                    Integer test = Integer.parseInt(mutableData.getValue().toString()+1);
                     mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
+                    HashMap<String,Object> testMap = new HashMap<>();
+                    testMap.put("messagenumber",test);
+                    database.child(key).updateChildren(testMap);
                 }
                 return Transaction.success(mutableData);
+
             }
 
             @Override
@@ -362,7 +375,8 @@ public interface firebasCallback{
 
     public void getMessegesFromRoom(String roomid, ChildEventListener listener){
 
-   Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
+            Query getMesseges = db.getReference("chatrooms").child(roomid).child("messeges").orderByChild("sent");
+//   Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
       //  Query   getMesseges = db.getReference("messeges").startAt("chat_room_id",roomid );
         getMesseges.addChildEventListener(listener);
 
