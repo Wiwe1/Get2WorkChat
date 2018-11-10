@@ -87,7 +87,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         LinearLayoutManager manager =new LinearLayoutManager(this);
         recyclerMesseges.setLayoutManager(manager);
         messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
-       // manager.setReverseLayout(true);
+           // manager.setReverseLayout(true);
             recyclerMesseges.setAdapter(messageRecyclerAdapter);
         db= new DBUtil();
 
@@ -198,6 +198,9 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                         Message message = dataSnapshot.getValue(Message.class);
                         msgList.add(message);
                             messageRecyclerAdapter.notifyDataSetChanged();
+                            recyclerMesseges.scrollToPosition(msgList.size()-1);
+                        recyclerMesseges.setItemViewCacheSize(9);
+
                     }
 
                     @Override

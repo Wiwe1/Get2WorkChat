@@ -22,9 +22,9 @@
         android:id="@+id/text_message_recieved"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="328dp"
-        android:layout_marginRight="328dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="308dp"
+        android:layout_marginRight="308dp"
         android:background="@drawable/rounded_rectangle_orange"
         android:padding="8dp"
         android:textColor="@android:color/black"
@@ -33,14 +33,26 @@
 
     </TextView>
 
+    <TextView
+        android:id="@+id/text_message_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginLeft="44dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/text_message_recieved"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.163" />
 
     <ImageView
         android:id="@+id/send_message_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="end"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
         android:layout_marginTop="16dp"
 
         android:adjustViewBounds="true"

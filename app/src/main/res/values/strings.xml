@@ -7,4 +7,5 @@
     <string name="send_message_hint">Type a message&#8230;</string>
     <string name="send_message_error">Please enter a message</string>
     <string name="send_message_failed">Failed to send your message</string>
+    <string name="delete_room">Delete room</string>
 </resources>

@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.BreakIterator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -34,7 +35,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
     private Context mcontext;
     private RequestManager glide;
 
-    public MessageRecyclerAdapter(RequestManager glide, List<Message> messages, String userId) {
+    public MessageRecyclerAdapter( RequestManager glide, List<Message> messages, String userId) {
         this.glide = glide;
         this.userId = userId;
         this.messages = messages;
@@ -92,14 +93,23 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
             }
         });
 
+        Log.d("Messagenumber", "mesagenum "+  messages.get(i).getMessage_number());
+
 
         switch (viewHolder.getItemViewType()){
+
+
 
             case SENT:
                 Log.d("TYPE","MESSAGETYPE"+messages.get(i).getMessage().toString());
                 SendMessageHolder vh = (SendMessageHolder) viewHolder;
                 if(messages.get(i).getType().equals("text")){
                     vh.imagemessage.setVisibility(View.GONE);
+                        if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
+                        //  vh.textmessage_num.setText("");
+                       vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+                    }
+
                     vh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
                    // vh.imagemessage.setVisibility(View.GONE);
                 }
@@ -107,9 +117,10 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
                     vh.textmessage.setText("");
                     vh.imagemessage.setVisibility(View.VISIBLE);
                     vh.imagemessage.setImageResource(0);
+                    //vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
                     glide.load(messages.get(viewHolder.getAdapterPosition()).getMessage().toString()).into(vh.imagemessage);
 
-                    // String url = messages.get(i).getMessage().toString().trim();
+                    // String url = messages.get(i).getMessage().toString().trim(); android:text="hej"
                 }
                 break;
 
@@ -118,6 +129,10 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
                 ReceivedMessageHolder receivedVh = (ReceivedMessageHolder)viewHolder;
                 if(messages.get(i).getType().equals("text")){
                     receivedVh.imagemessage.setVisibility(View.GONE);
+                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
+                        //receivedVh.textmessage_num.setText("");
+                        //receivedVh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+                    }
                     receivedVh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
                   //  ((ReceivedMessageHolder)viewHolder).bind(messages.get(i));
                     break;
@@ -138,6 +153,10 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
     }
 
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(hasStableIds);
+    }
 
     @Override
     public int getItemCount() {
@@ -167,7 +186,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 }
 
 class SendMessageHolder extends RecyclerView.ViewHolder {
-
+    public  TextView textmessage_num;
     public TextView textmessage;
     public   ImageView imagemessage;
     public CircleImageView profileimage;
@@ -176,7 +195,7 @@ class SendMessageHolder extends RecyclerView.ViewHolder {
         profileimage = itemView.findViewById(R.id.profie_message);
         imagemessage = itemView.findViewById(R.id.send_message_image);
         textmessage = itemView.findViewById(R.id.text_message_send);
-
+        textmessage_num = itemView.findViewById(R.id.text_message_number);
     }
 
 
@@ -186,12 +205,14 @@ class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
  public    TextView textmessage ;
     public ImageView imagemessage;
     public ImageView profileimage;
+    public TextView textmessage_num;
 
     public ReceivedMessageHolder(@NonNull View itemView) {
         super(itemView);
         textmessage = itemView.findViewById(R.id.text_message_recieved);
         imagemessage = itemView.findViewById(R.id.send_message_image);
         profileimage = itemView.findViewById(R.id.profie_message);
+        textmessage_num= itemView.findViewById(R.id.text_message_number);
     }
 
     void  bind(Message message){

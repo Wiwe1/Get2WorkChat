@@ -58,6 +58,12 @@ public interface firebasCallback{
     void OnCallBack(List<Chat_room> list);
 
     }
+
+    public interface getCounterCallbck{
+
+    void getCounter(int counter);
+
+    }
 //region UserMethods
 
     public void intCurrentUser() {
@@ -319,17 +325,85 @@ public interface firebasCallback{
                  }
              });
 */
-        Map<String,Object> mapMessage = new HashMap<>();
+        final Map<String,Object> mapMessage = new HashMap<>();
 
+      final   int  test;
         final DatabaseReference messagesTest = db.getReference("chatrooms").child(roomid).child("messeges").push();
         final DatabaseReference messagesTest2 = db.getReference("chatrooms").child(roomid).child("messeges");
         final DatabaseReference messagesNumberTest = db.getReference("chatrooms").child(roomid).child("count");
+        final long[] count = new long[1];
+       updateCount(messagesNumberTest, new getCounterCallbck() {
+           @Override
+           public void getCounter(int counter) {
+
+               count[0] = counter;
+               Log.d("updateCounter", "getCounter: "+counter);
+
+               mapMessage.put("chat_room_id",roomid);
+               mapMessage.put("sender_id",senderId);
+               mapMessage.put("message",message);
+               mapMessage.put("type",type);
+               mapMessage.put("sent",ServerValue.TIMESTAMP);
+                mapMessage.put("message_number",count[0]);
+               //     testcount   = testcount+1;
+               messagesTest.setValue(mapMessage, new DatabaseReference.CompletionListener() {
+                   @Override
+                   public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                       Log.d("MESSAGE","MESSAGE SENT" + message);
+                       //     Log.d("DATABASEERROR","ERROR: "+databaseError.getDetails().toString());
+
+
+                   }
+               });
+
+
+           }
+       });
+
+/*
+        messagesNumberTest.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mapMessage.clear();
+                 count[0] = (long)dataSnapshot.getValue();
+                Log.d("Count", "onDataChange: "+ count[0]);
+
+                mapMessage.put("chat_room_id",roomid);
+                mapMessage.put("sender_id",senderId);getCounter
+                mapMessage.put("message",message);getCounter
+                mapMessage.put("type",type);
+                mapMessage.put("sent",ServerValue.TIMESTAMP);
+                mapMessage.put("message_number",count[0]);
+                //     testcount   = testcount+1;
+                messagesTest.setValue(mapMessage, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        Log.d("MESSAGE","MESSAGE SENT" + message);
+                        //     Log.d("DATABASEERROR","ERROR: "+databaseError.getDetails().toString());
+
+
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+
+*/
+/*
         mapMessage.put("chat_room_id",roomid);
         mapMessage.put("sender_id",senderId);
         mapMessage.put("message",message);
         mapMessage.put("type",type);
         mapMessage.put("sent",ServerValue.TIMESTAMP);
-    //    mapMessage.put("message_number",testcount);
+     // mapMessage.put("message_number",count[0]);
    //     testcount   = testcount+1;
         messagesTest.setValue(mapMessage, new DatabaseReference.CompletionListener() {
             @Override
@@ -340,10 +414,10 @@ public interface firebasCallback{
 
             }
         });
-        updateCount(messagesTest,messagesTest.getKey().toString());
+*/
     }
 
-    public void updateCount(final DatabaseReference database, final String key){
+    public void updateCount(final DatabaseReference database, final getCounterCallbck counterCallbck){
         database.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -355,11 +429,14 @@ public interface firebasCallback{
                 }
                 else{
 
-                    Integer test = Integer.parseInt(mutableData.getValue().toString()+1);
+
                     mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
-                    HashMap<String,Object> testMap = new HashMap<>();
-                    testMap.put("messagenumber",test);
-                    database.child(key).updateChildren(testMap);
+                    int  test = Integer.parseInt(mutableData.getValue().toString());
+
+                    counterCallbck.getCounter(test);
+                    //HashMap<String,Object> testMap = new HashMap<>();
+                    //testMap.put("messagenumber",test);
+                   // database.child(key).updateChildren(testMap);
                 }
                 return Transaction.success(mutableData);
 
@@ -372,6 +449,29 @@ public interface firebasCallback{
             }
         });
     }
+
+    public void deleteRoom(final String roomid){
+
+
+
+    DatabaseReference removeRoom = db.getReference("chatrooms").child(roomid);
+removeRoom .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            //enter your code what you want excute                     after remove value in firebase.
+                        } else {
+                            //enter msg or enter your code which you want to show in case of value is not remove properly or removed failed.
+
+                            Log.d("RemovedRoom", "onComplete: Removed room with id " + roomid);
+
+                        }
+                    }
+                });
+
+    }
+
 
     public void getMessegesFromRoom(String roomid, ChildEventListener listener){
 

@@ -9,16 +9,16 @@ public class Message {
     private String message;
     private String type;
     private Long sent;
-    private Long messageNumber;
+    private Long message_number;
 
-    public Message(String id, String sender_id, String chat_room_id, String message, String type, Long sent, Long messageNumber) {
+    public Message(String id, String sender_id, String chat_room_id, String message, String type, Long sent, Long message_number) {
         this.id = id;
         this.sender_id = sender_id;
         this.chat_room_id = chat_room_id;
         this.message = message;
         this.sent = sent;
         this.type = type;
-        this.messageNumber = messageNumber;
+        this.message_number = message_number;
     }
 
     public Message() {
@@ -79,11 +79,12 @@ public class Message {
         this.sent = sent;
     }
 
-    public Long getMessageNumber() {
-        return messageNumber;
+
+    public Long getMessage_number() {
+        return message_number;
     }
 
-    public void setMessageNumber(Long messageNumber) {
-        this.messageNumber = messageNumber;
+    public void setMessage_number(Long message_number) {
+        this.message_number = message_number;
     }
 }
