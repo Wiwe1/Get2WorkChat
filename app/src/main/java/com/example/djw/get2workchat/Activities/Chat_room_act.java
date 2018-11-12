@@ -109,10 +109,6 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         }
 
 
-        DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("count");
-
-       //db.updateCount(hej);
-
         SendImageMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,12 +315,14 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         View dialogView = inflater.inflate(R.layout.dialog_add_people, null);
         builder.setView(dialogView);
         builder.setTitle(R.string.addPeople_dialog_title);
-        EditText editText = (EditText) dialogView.findViewById(R.id.dialog_name);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.dialog_name);
 
 
             builder.setPositiveButton(R.string.addPeople_dialog_add, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
+                    db.addUserToRoom(editText.getText().toString(),roomId);
 
                 }
             }).setNegativeButton(R.string.addPeople_dialog_cancel, new DialogInterface.OnClickListener() {
@@ -332,7 +330,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                 public void onClick(DialogInterface dialog, int which) {
 
                 }
-            });
+            }).show();
 
 
 

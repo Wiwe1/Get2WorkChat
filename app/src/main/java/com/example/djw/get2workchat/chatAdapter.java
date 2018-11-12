@@ -47,7 +47,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final chatViewHolder chatViewHolder, int position) {
+    public void onBindViewHolder(@NonNull final chatViewHolder chatViewHolder, final int position) {
 
         chatViewHolder.bind(chatrooms.get(position));
         chatViewHolder.room_options.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +67,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
                             case R.id.delete_room:
                                 Toast.makeText(mContext, "clicked"+chatrooms.get(chatViewHolder.getAdapterPosition()).getName(), Toast.LENGTH_SHORT).show();
                                 db.deleteRoom(chatrooms.get(chatViewHolder.getAdapterPosition()).getId());
+                                chatrooms.remove(chatViewHolder.getAdapterPosition());
+                                notifyItemRemoved(chatViewHolder.getAdapterPosition());
                                 break;
                         }
 

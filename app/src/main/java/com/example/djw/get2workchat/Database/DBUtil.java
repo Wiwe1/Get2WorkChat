@@ -1,17 +1,10 @@
 package com.example.djw.get2workchat.Database;
-import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.djw.get2workchat.Data_Models.Chat_room;
 import com.example.djw.get2workchat.Data_Models.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,7 +18,6 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,18 +29,14 @@ public class DBUtil {
 
 
      private    FirebaseDatabase db = FirebaseDatabase.getInstance();
-
-     private int testcount =0;
-
     private  FirebaseAuth auth = FirebaseAuth.getInstance();
     private DatabaseReference test = db.getReference();
     private  DatabaseReference user = db.getReference().child("users");
-
-    private DatabaseReference myref = db.getReference("users").child(auth.getCurrentUser().getUid());
+    private DatabaseReference currentUser = db.getReference("users").child(auth.getCurrentUser().getUid());
     private    DatabaseReference chatrooms = db.getReference("chatrooms").push();
     private  DatabaseReference getChatRooms = db.getReference("chatrooms");
     private DatabaseReference  UpdateChatRoom = db.getReference("chatrooms").child("UserIds").push();
-    private    DatabaseReference addUsserChat = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
+    private    DatabaseReference userEngagedChats = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
     private  DatabaseReference messages = db.getReference("messeges").push();
     private     List<Chat_room> chtrom;
 
@@ -75,7 +63,7 @@ public interface firebasCallback{
                 if(!dataSnapshot.exists()){
                         String Auth_id= auth.getUid();
                         User user = new User(auth.getCurrentUser().getDisplayName().toString(),auth.getCurrentUser().getEmail().toString(),null,null,null);
-                        myref.setValue(user);
+                        currentUser.setValue(user);
 
                 }
             }
@@ -87,7 +75,7 @@ public interface firebasCallback{
         };
 
 
-        myref.addListenerForSingleValueEvent(valueEventListener);
+        currentUser.addListenerForSingleValueEvent(valueEventListener);
 
     }
 
@@ -105,7 +93,7 @@ public interface firebasCallback{
     public void updateUser(final String name, final String email, final String phone_number, final String prof, final String ProfilePicturePath)
     {
 
-            myref.addValueEventListener(new ValueEventListener() {
+            currentUser.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -123,7 +111,7 @@ public interface firebasCallback{
                        userInfo.put("profession",prof);
                    if(ProfilePicturePath!= null)
                        userInfo.put("profilePicturePath",ProfilePicturePath);
-                    myref.updateChildren(userInfo);
+                    currentUser.updateChildren(userInfo);
                 }
 
                 @Override
@@ -168,7 +156,7 @@ public interface firebasCallback{
   //                      DatabaseReference groupmembers =db.getReference("chatrooms").child(chatrooms.getKey());
 //                        groupmembers.push().setValue(auth.getCurrentUser().getUid());
                     //Addes the user to the chatroom he just created;
-                        addUsserChat.push().setValue(chatrooms.getKey());
+                        userEngagedChats.push().setValue(chatrooms.getKey());
 
                     }
                 }
@@ -210,7 +198,7 @@ public interface firebasCallback{
                     final    DatabaseReference addUsserChat = db.getReference("users").child(Userid).child("engaged chats");
                     userid.put(uuid,Userid);
                     Log.d("USERID", "onDataChange: "+userid.get("test"));
-                    // addUsserChat.push().setValue(roomid);
+                    // userEngagedChats.push().setValue(roomid);
                     UpdateChatRoom.updateChildren(userid);
                     addUsserChat.push().setValue(roomid);
 
@@ -241,7 +229,7 @@ public interface firebasCallback{
         chtrom = new ArrayList<Chat_room>();
 
 
-        addUsserChat.addChildEventListener(new ChildEventListener() {
+        userEngagedChats.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -293,38 +281,7 @@ public interface firebasCallback{
     }
 
     public void sendMessageChatRoom(final String roomid, final String senderId, final String message, final String type, DatabaseReference.CompletionListener completionListener){
-/*
-             messages.runTransaction(new Transaction.Handler() {
-                 @NonNull
-                 @Override
-                 public Transaction.Result doTransaction(@NonNull MutableData currentData) {
-                     long value2= 0;
-                     long value = currentData.getValue(Long.class);
-                     if(currentData.getValue()!=null){
-                         currentData.setValue(0);
-                     }
-                     else {
-                        value2 = (Long) currentData.getValue();
 
-
-                     }
-                     value2++;
-
-                            currentData.setValue(value2);
-
-
-
-                            Log.d("transaction value ","test af transaction"+ value2);
-
-                     return  Transaction.success(currentData);
-                }
-
-                 @Override
-                 public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-                 }
-             });
-*/
         final Map<String,Object> mapMessage = new HashMap<>();
 
       final   int  test;
@@ -335,16 +292,13 @@ public interface firebasCallback{
        updateCount(messagesNumberTest, new getCounterCallbck() {
            @Override
            public void getCounter(int counter) {
-
-               count[0] = counter;
                Log.d("updateCounter", "getCounter: "+counter);
-
                mapMessage.put("chat_room_id",roomid);
                mapMessage.put("sender_id",senderId);
                mapMessage.put("message",message);
                mapMessage.put("type",type);
                mapMessage.put("sent",ServerValue.TIMESTAMP);
-                mapMessage.put("message_number",count[0]);
+                mapMessage.put("message_number",counter);
                //     testcount   = testcount+1;
                messagesTest.setValue(mapMessage, new DatabaseReference.CompletionListener() {
                    @Override
@@ -417,23 +371,27 @@ public interface firebasCallback{
 */
     }
 
+    // Increments the a counter used formessages
     public void updateCount(final DatabaseReference database, final getCounterCallbck counterCallbck){
         database.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
 
 
-
+// Checks if a value exsist and set's it to one if it does not. Returns th value in callback
                 if(mutableData.getValue() == null){
+
                     mutableData.setValue(1);
+                    int Counter = Integer.parseInt(mutableData.getValue().toString());
+                    counterCallbck.getCounter(Counter);
                 }
                 else{
 
-
+                    //Reads the counter and increments it.
                     mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
-                    int  test = Integer.parseInt(mutableData.getValue().toString());
+                    int  Counter     = Integer.parseInt(mutableData.getValue().toString());
 
-                    counterCallbck.getCounter(test);
+                    counterCallbck.getCounter(Counter);
                     //HashMap<String,Object> testMap = new HashMap<>();
                     //testMap.put("messagenumber",test);
                    // database.child(key).updateChildren(testMap);
@@ -452,24 +410,126 @@ public interface firebasCallback{
 
     public void deleteRoom(final String roomid){
 
-
-
+/*
     DatabaseReference removeRoom = db.getReference("chatrooms").child(roomid);
 removeRoom .removeValue()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            //enter your code what you want excute                     after remove value in firebase.
-                        } else {
-                            //enter msg or enter your code which you want to show in case of value is not remove properly or removed failed.
-
                             Log.d("RemovedRoom", "onComplete: Removed room with id " + roomid);
+                        } else {
 
                         }
                     }
                 });
 
+*/
+            final Query getAllUsers = db.getReference("users");
+            getAllUsers.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    String userKey = dataSnapshot.getKey()    .toString();
+                    Log.d("userKey", "onComplete: Removed room with id " + userKey);
+
+                    final Query removeUser = db.getReference("users").child(userKey).child("engaged chats");
+
+                    removeUser.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+
+                                if (roomid.contentEquals(dsp.getValue().toString())) {
+
+                                    ((DatabaseReference) removeUser).child(dsp.getKey()).removeValue();
+
+                                    //  removeUser.
+
+                                    Log.d("Roomkey", "onDataChange: " + dsp.getKey());
+
+
+                                }
+
+
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+/*
+    final Query removeUser = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
+
+    removeUser.addValueEventListener(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            for(DataSnapshot dsp : dataSnapshot.getChildren()){
+
+                if(roomid.contentEquals(dsp.getValue().toString())){
+
+                        ((DatabaseReference) removeUser).child(dsp.getKey()).removeValue();
+
+                  //  removeUser.
+
+                    Log.d("Roomkey", "onDataChange: "+dsp.getKey());
+
+
+                }
+
+            }
+            String key = dataSnapshot.getKey();
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    });
+*/
+
+        /*
+        removeUser .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("RemovedRoom", "onComplete: Removed room with id " + roomid);
+                        }
+                        else {
+
+
+
+                        }
+                    }
+                });
+*/
     }
 
 
