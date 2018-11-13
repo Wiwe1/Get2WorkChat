@@ -40,13 +40,14 @@ public class DBUtil {
     private  DatabaseReference messages = db.getReference("messeges").push();
     private     List<Chat_room> chtrom;
 
-
+//Callback for getting User chatrooms
 public interface firebasCallback{
 
     void OnCallBack(List<Chat_room> list);
 
     }
 
+    //Caallback for getting the message counter
     public interface getCounterCallbck{
 
     void getCounter(int counter);
@@ -62,7 +63,7 @@ public interface firebasCallback{
 
                 if(!dataSnapshot.exists()){
                         String Auth_id= auth.getUid();
-                        User user = new User(auth.getCurrentUser().getDisplayName().toString(),auth.getCurrentUser().getEmail().toString(),null,null,null);
+                        User user = new User(auth.getCurrentUser().getDisplayName().toString(),auth.getCurrentUser().getEmail().toString(),null,null,null,null);
                         currentUser.setValue(user);
 
                 }
@@ -224,23 +225,26 @@ public interface firebasCallback{
 
     }
 
-
+// Get's the chat rooms which a particular user is engaged in.
     public void getUserRooms(final firebasCallback firebasCallback){
         chtrom = new ArrayList<Chat_room>();
 
 
         userEngagedChats.addChildEventListener(new ChildEventListener() {
-
+// Gets the engaged chats of the user
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 //    chtrom.clear();
                 final String groupKey = dataSnapshot.getValue().toString();
+
+                //Gets the rooms which corresponds to those ids.
                 test.child("chatrooms/"+groupKey+"/name").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         chtrom.add(new Chat_room(groupKey,dataSnapshot.getValue().toString(),null));
                             Log.d(dataSnapshot.getValue().toString(),"User is member of this group");
+                            // Call to callback interface for useing the results outside of onDataChange
                             firebasCallback.OnCallBack(chtrom);
 
                     }
@@ -284,9 +288,9 @@ public interface firebasCallback{
 
         final Map<String,Object> mapMessage = new HashMap<>();
 
-      final   int  test;
+
         final DatabaseReference messagesTest = db.getReference("chatrooms").child(roomid).child("messeges").push();
-        final DatabaseReference messagesTest2 = db.getReference("chatrooms").child(roomid).child("messeges");
+     //   final DatabaseReference messagesTest2 = db.getReference("chatrooms").child(roomid).child("messeges");
         final DatabaseReference messagesNumberTest = db.getReference("chatrooms").child(roomid).child("count");
         final long[] count = new long[1];
        updateCount(messagesNumberTest, new getCounterCallbck() {
@@ -299,7 +303,6 @@ public interface firebasCallback{
                mapMessage.put("type",type);
                mapMessage.put("sent",ServerValue.TIMESTAMP);
                 mapMessage.put("message_number",counter);
-               //     testcount   = testcount+1;
                messagesTest.setValue(mapMessage, new DatabaseReference.CompletionListener() {
                    @Override
                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -426,9 +429,12 @@ removeRoom .removeValue()
 
 */
             final Query getAllUsers = db.getReference("users");
+                // Get's the ids of all users and lopps though each the users engaged chats to see if it contains the room id
             getAllUsers.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    // The User Id
                     String userKey = dataSnapshot.getKey()    .toString();
                     Log.d("userKey", "onComplete: Removed room with id " + userKey);
 
@@ -441,6 +447,8 @@ removeRoom .removeValue()
                             for (DataSnapshot dsp : dataSnapshot.getChildren()) {
 
                                 if (roomid.contentEquals(dsp.getValue().toString())) {
+
+                                    // Removes the room id if equal to the roo id given as parameter
 
                                     ((DatabaseReference) removeUser).child(dsp.getKey()).removeValue();
 
@@ -533,13 +541,13 @@ removeRoom .removeValue()
     }
 
 
+    // Gets the messges in a room and orders the by the time they are sent
     public void getMessegesFromRoom(String roomid, ChildEventListener listener){
 
             Query getMesseges = db.getReference("chatrooms").child(roomid).child("messeges").orderByChild("sent");
 //   Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
       //  Query   getMesseges = db.getReference("messeges").startAt("chat_room_id",roomid );
         getMesseges.addChildEventListener(listener);
-
 
     }
 

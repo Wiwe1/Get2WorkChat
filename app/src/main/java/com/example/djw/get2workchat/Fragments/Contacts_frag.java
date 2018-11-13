@@ -29,7 +29,7 @@ public class Contacts_frag extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-     v = inflater.inflate(R.layout.contacts_frag,container,false);
+     v = inflater.inflate(R.layout.frag_contacs,container,false);
  vRecycler = (RecyclerView)v.findViewById(R.id.contact_recycler);
  RecyclerViewAdapter recycleAdapter = new RecyclerViewAdapter(getContext(),lstContacs);
         vRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));

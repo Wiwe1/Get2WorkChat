@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
@@ -70,6 +71,14 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
         Message message = messages.get(i);
 
+/*
+        ((ReceivedMessageHolder)viewHolder).profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+*/
         db.getUserById(messages.get(i).getSender_id().toString(), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -119,6 +128,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
                     vh.imagemessage.setImageResource(0);
                     //vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
                     glide.load(messages.get(viewHolder.getAdapterPosition()).getMessage().toString()).into(vh.imagemessage);
+
 
                     // String url = messages.get(i).getMessage().toString().trim(); android:text="hej"
                 }
@@ -181,10 +191,49 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public long getItemId(int position) {
+
         return super.getItemId(position);
     }
-}
 
+    class SendMessageHolder extends RecyclerView.ViewHolder {
+        public  TextView textmessage_num;
+        public TextView textmessage;
+        public   ImageView imagemessage;
+        public CircleImageView profileimage;
+        public SendMessageHolder(@NonNull View itemView) {
+            super(itemView);
+            profileimage = itemView.findViewById(R.id.profie_message);
+            imagemessage = itemView.findViewById(R.id.send_message_image);
+            textmessage = itemView.findViewById(R.id.text_message_send);
+            textmessage_num = itemView.findViewById(R.id.text_message_number);
+        }
+
+
+    }
+
+
+    class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
+        public    TextView textmessage ;
+        public ImageView imagemessage;
+        public CircleImageView profileimage;
+        public TextView textmessage_num;
+
+        public ReceivedMessageHolder(@NonNull View itemView) {
+            super(itemView);
+            textmessage = itemView.findViewById(R.id.text_message_recieved);
+            imagemessage = itemView.findViewById(R.id.send_message_image);
+            profileimage = itemView.findViewById(R.id.profie_message);
+            textmessage_num= itemView.findViewById(R.id.text_message_number);
+        }
+
+        void  bind(Message message){
+
+            textmessage.setText(message.getMessage());
+
+        }
+    }
+}
+/*
 class SendMessageHolder extends RecyclerView.ViewHolder {
     public  TextView textmessage_num;
     public TextView textmessage;
@@ -200,7 +249,8 @@ class SendMessageHolder extends RecyclerView.ViewHolder {
 
 
 }
-
+*/
+/*
 class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
  public    TextView textmessage ;
     public ImageView imagemessage;
@@ -221,4 +271,4 @@ class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
 
     }
 }
-
+*/

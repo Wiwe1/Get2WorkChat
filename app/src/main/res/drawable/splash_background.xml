@@ -5,7 +5,7 @@
 
     <item>
         <bitmap
-            android:src="@drawable/wiwe"
+            android:src="@drawable/g2work"
             android:gravity="center">
         </bitmap>
     </item>

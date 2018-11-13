@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <solid
-        android:color="#008000" >
+        android:color="#6200EE" >
     </solid>
 
     <!-- The radius makes the corners rounded -->

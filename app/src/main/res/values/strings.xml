@@ -8,4 +8,8 @@
     <string name="send_message_error">Please enter a message</string>
     <string name="send_message_failed">Failed to send your message</string>
     <string name="delete_room">Delete room</string>
+    <string name="profile_profession_text">Skriv dit profession</string>
+    <string name="profile_email_text">Skriv dit email</string>
+    <string name="profile_phone_number_text">Skriv dit telefonnummer</string>
+
 </resources>

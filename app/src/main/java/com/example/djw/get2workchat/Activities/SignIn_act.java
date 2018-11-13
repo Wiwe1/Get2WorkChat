@@ -42,7 +42,7 @@ public class SignIn_act extends AppCompatActivity {
 
                 Intent i = AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .setLogo(R.drawable.common_full_open_on_phone)
+                        .setLogo(R.drawable.g2work)
                         .setIsSmartLockEnabled(false)
                         .build();
 

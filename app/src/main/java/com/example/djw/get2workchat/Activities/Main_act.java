@@ -1,5 +1,6 @@
 package com.example.djw.get2workchat.Activities;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -10,11 +11,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Database.DBUtil;
-import com.example.djw.get2workchat.Fragments.Calls_frag;
+import com.example.djw.get2workchat.Fragments.Profile_frag;
 import com.example.djw.get2workchat.Fragments.Chats_frag;
 import com.example.djw.get2workchat.Fragments.Contacts_frag;
 import com.example.djw.get2workchat.R;
@@ -22,11 +22,8 @@ import com.example.djw.get2workchat.ViewPagerAdapter;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import static android.app.PendingIntent.getActivity;
@@ -56,11 +53,13 @@ public class Main_act extends AppCompatActivity {
         tbar = findViewById(R.id.toolbar);
         tab =  findViewById(R.id.tab_layout);
         vPage =  findViewById(R.id.viewpage);
+        tbar.setTitleTextColor(Color.WHITE);
         vPageAdapp = new ViewPagerAdapter(getSupportFragmentManager());
 
         vPageAdapp.AddFragment(new Chats_frag(),"Chats ");
-        vPageAdapp.AddFragment(new Contacts_frag(),"Contacts");
-        vPageAdapp.AddFragment(new Calls_frag(),"Calls");
+        vPageAdapp.AddFragment(new Profile_frag(),"Profile");
+//        vPageAdapp.AddFragment(new Contacts_frag(),"Contacts");
+
         vPage.setAdapter(vPageAdapp);
         tab.setupWithViewPager(vPage);
         setSupportActionBar(tbar);
