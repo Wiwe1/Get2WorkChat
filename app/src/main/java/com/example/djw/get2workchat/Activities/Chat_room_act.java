@@ -87,8 +87,8 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         recyclerMesseges = findViewById(R.id.chat_messages);
         LinearLayoutManager manager =new LinearLayoutManager(this);
         recyclerMesseges.setLayoutManager(manager);
-        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
-           // manager.setReverseLayout(true);
+        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId,getApplicationContext());
+           // manager.setReverseLayout(true);,g
             recyclerMesseges.setAdapter(messageRecyclerAdapter);
         db= new DBUtil();
 

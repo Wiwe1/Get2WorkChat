@@ -1,18 +1,22 @@
 package com.example.djw.get2workchat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.djw.get2workchat.Activities.Profile_Act;
 import com.example.djw.get2workchat.Data_Models.Message;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.google.firebase.database.DataSnapshot;
@@ -36,10 +40,11 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
     private Context mcontext;
     private RequestManager glide;
 
-    public MessageRecyclerAdapter( RequestManager glide, List<Message> messages, String userId) {
+    public MessageRecyclerAdapter( RequestManager glide, List<Message> messages, String userId,Context mcontext) {
         this.glide = glide;
         this.userId = userId;
         this.messages = messages;
+        this.mcontext = mcontext;
     }
 
     @NonNull
@@ -90,6 +95,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
                 //    glide.load(image).into(((SendMessageHolder)viewHolder).profileimage);
 
                 }else{
+
                     glide.load(image).into(((ReceivedMessageHolder)viewHolder).profileimage);
                 }
 
@@ -136,7 +142,11 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
 
             case RECEIVED:
-                ReceivedMessageHolder receivedVh = (ReceivedMessageHolder)viewHolder;
+                final ReceivedMessageHolder receivedVh = (ReceivedMessageHolder)viewHolder;
+
+                profilePopup(viewHolder, receivedVh);
+
+
                 if(messages.get(i).getType().equals("text")){
                     receivedVh.imagemessage.setVisibility(View.GONE);
                     if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
@@ -163,6 +173,41 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
     }
 
+    private void profilePopup(@NonNull final RecyclerView.ViewHolder viewHolder, final ReceivedMessageHolder receivedVh) {
+        receivedVh.profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(mcontext, "ClickdProfile "+messages.get(viewHolder.getAdapterPosition()).getSender_id(), Toast.LENGTH_SHORT).show();
+
+                PopupMenu pop =  new PopupMenu(mcontext,receivedVh.profileimage);
+
+                pop.inflate(R.menu.message_menu);
+
+                pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        switch (item.getItemId()){
+
+                            case R.id.message_menu_profile:
+                                Intent i = new Intent(mcontext,Profile_Act.class);
+                                i.putExtra("UserId",messages.get(viewHolder.getAdapterPosition()).getSender_id());
+                                mcontext.startActivity(i);
+                                break;
+                        }
+
+                        return false;
+                    }
+                });
+
+                pop.show();
+
+
+                return  false;
+            }
+        });
+    }
+
     @Override
     public void setHasStableIds(boolean hasStableIds) {
         super.setHasStableIds(hasStableIds);
@@ -173,6 +218,8 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
         return messages.size();
     }
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -223,6 +270,12 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
             textmessage = itemView.findViewById(R.id.text_message_recieved);
             imagemessage = itemView.findViewById(R.id.send_message_image);
             profileimage = itemView.findViewById(R.id.profie_message);
+            profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return false;
+                }
+            });
             textmessage_num= itemView.findViewById(R.id.text_message_number);
         }
 
