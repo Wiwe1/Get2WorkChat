@@ -542,9 +542,9 @@ removeRoom .removeValue()
 
 
     // Gets the messges in a room and orders the by the time they are sent
-    public void getMessegesFromRoom(String roomid, ChildEventListener listener){
-
-            Query getMesseges = db.getReference("chatrooms").child(roomid).child("messeges").orderByChild("sent");
+    public void getMessegesFromRoom(String roomid,int total_messeges,int currentpage, ChildEventListener listener){
+ DatabaseReference messageRef = db.getReference("chatrooms").child(roomid).child("messeges");
+            Query getMesseges = messageRef.orderByChild("sent").limitToLast(currentpage*total_messeges);
 //   Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
       //  Query   getMesseges = db.getReference("messeges").startAt("chat_room_id",roomid );
         getMesseges.addChildEventListener(listener);

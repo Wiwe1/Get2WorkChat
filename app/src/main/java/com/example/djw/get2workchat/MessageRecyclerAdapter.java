@@ -38,13 +38,23 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
     private  String userId;
     private List<Message> messages;
     private Context mcontext;
+    private  profileImageClick listener;
     private RequestManager glide;
 
-    public MessageRecyclerAdapter( RequestManager glide, List<Message> messages, String userId,Context mcontext) {
+
+    public interface profileImageClick{
+
+        public void profileclick(View v,int position);
+
+    }
+
+
+    public MessageRecyclerAdapter( RequestManager glide, List<Message> messages, String userId,Context mcontext,profileImageClick listener) {
         this.glide = glide;
         this.userId = userId;
         this.messages = messages;
         this.mcontext = mcontext;
+        this.listener = listener;
     }
 
     @NonNull
@@ -144,7 +154,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
             case RECEIVED:
                 final ReceivedMessageHolder receivedVh = (ReceivedMessageHolder)viewHolder;
 
-                profilePopup(viewHolder, receivedVh);
+//                profilePopup(viewHolder, receivedVh);
 
 
                 if(messages.get(i).getType().equals("text")){
@@ -270,13 +280,31 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
             textmessage = itemView.findViewById(R.id.text_message_recieved);
             imagemessage = itemView.findViewById(R.id.send_message_image);
             profileimage = itemView.findViewById(R.id.profie_message);
-            profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+
+
+                    profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            if(listener!=null)
+                            {
+                                listener.profileclick(v,getAdapterPosition());
+                            }
+
+
+                            return true;
+                        }
+                    });
+
+           /* profileimage.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     return false;
                 }
             });
+*/
             textmessage_num= itemView.findViewById(R.id.text_message_number);
+
+
         }
 
         void  bind(Message message){

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,22 +52,22 @@ public class Profile_Act extends AppCompatActivity {
     private ImageView profile_image;
     private Button btn_save;
     private FirebaseAuth mAuth;
-    private String UserID;
+  //  private String UserID;
     private Uri resulturi;
     private String profilePicturePath;
-
-
+    private  DBUtil dbUtil;
+private String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
         mAuth = FirebaseAuth.getInstance();
-        UserID = mAuth.getCurrentUser().getUid();
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        myref = db.getReference("users").child(UserID);
+      //  UserID = mAuth.getCurrentUser().getUid();
+       // FirebaseDatabase db = FirebaseDatabase.getInstance();
+       // myref = db.getReference("users").child(UserID);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+        dbUtil = new DBUtil();
 
         profile_name = (EditText) findViewById(R.id.profile_name);
         profile_email = (EditText) findViewById(R.id.profile_email);
@@ -75,7 +76,7 @@ public class Profile_Act extends AppCompatActivity {
         profile_image = (ImageView) findViewById(R.id.profile_picture);
         btn_save = (Button) findViewById(R.id.btn_save);
 
-        getUserDetails();
+
 
         profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +87,7 @@ public class Profile_Act extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
+        btn_save.setVisibility(View.GONE);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +98,17 @@ public class Profile_Act extends AppCompatActivity {
             }
         });
 
+        // Gets the RoomId and Name passed via an Intent from the fragment.
+        Bundle extras = getIntent().getExtras();
+
+
+        if(extras!= null){
+            userId = extras.getString("userId","");
+
+            Log.d(userId, "onCreate: EXTRAS");
+        }
+
+        getUserDetails();
 
     }
 
@@ -107,8 +120,8 @@ public class Profile_Act extends AppCompatActivity {
         String phone = profile_phone.getText().toString();
         String proff = profile_profession.getText().toString();
 
-        final DBUtil db = new DBUtil();
-        db.updateUser(name, mail,phone,proff, null);
+
+        dbUtil.updateUser(name, mail,phone,proff, null);
 
         if (resulturi != null) {
 
@@ -140,7 +153,7 @@ public class Profile_Act extends AppCompatActivity {
                             newImage.put("profilePicturePath", uri.toString());
 
 
-                            db.updateUser(null, null, null, null, uri.toString());
+                            dbUtil.updateUser(null, null, null, null, uri.toString());
                             finish();
                             return;
                         }
@@ -162,8 +175,58 @@ public class Profile_Act extends AppCompatActivity {
 
 
 
+
+
     private void getUserDetails() {
 
+        dbUtil.getUserById(userId,new  ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    //    User user = dataSnapshot.getValue(User.class);
+                    Map<String, Object> UserInfo = (Map<String, Object>) dataSnapshot.getValue();
+                    if (UserInfo.get("userName") != null) {
+                        String UserNmame = UserInfo.get("userName").toString();
+                        profile_name.setText(UserNmame);
+                    }
+                    if (UserInfo.get("email") != null) {
+                        String email = UserInfo.get("email").toString();
+                        profile_email.setText(email);
+                    }
+                    if (UserInfo.get("profilePicturePath") != null) {
+                        String profilepicture = UserInfo.get("profilePicturePath").toString();
+                        Glide.with(getApplication()).load(profilepicture).into(profile_image);
+
+
+                        if(UserInfo.get("profession") !=null){
+
+                            String profession = UserInfo.get("profession").toString();
+                            profile_profession.setText(profession);
+
+                        }
+
+                        /*
+
+                        profile_name.setText(user.getUserName());
+                        profile_email.setText(user.getEmail());
+                        profile_phone.setText(user.getPhone_number());
+                        profilePicturePath = user.getProfilePicturePath();
+                        profile_profession.setText(user.getProfession());
+
+*/
+                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+/*
         myref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -183,14 +246,14 @@ public class Profile_Act extends AppCompatActivity {
                         String profilepicture = UserInfo.get("profilePicturePath").toString();
                         Glide.with(getApplication()).load(profilepicture).into(profile_image);
 
-                    /*
+
 
                     profile_name.setText(user.getUserName());
                     profile_email.setText(user.getEmail());
                     profile_phone.setText(user.getPhone_number());
                     profilePicturePath = user.getProfilePicturePath();
                     profile_profession.setText(user.getProfession());
-                   */
+
                         //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
 
                     }
@@ -202,7 +265,7 @@ public class Profile_Act extends AppCompatActivity {
 
             }
         });
-
+*/
     }
 
     @Override

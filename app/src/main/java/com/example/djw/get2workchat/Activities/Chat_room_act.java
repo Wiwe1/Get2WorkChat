@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,25 +52,27 @@ import java.util.List;
 import java.util.UUID;
 
 public class Chat_room_act extends AppCompatActivity {
-   // private static  final String CURRENT_USER ="CURRENT_USR";
+    private  static int total_items_load = 10;
+    private int currentPage =1;
     private static final String room_id = "room_id";
     private static final String room_name = "room_name";
     private Uri resulturi;
-    private String profilePicturePath;
     private String roomId;
     private String roomName;
     private DBUtil db;
-private String userId;
-private EditText txtMessage;
-private ImageButton sendMessage;
-private ImageView SendImageMessage;
-private ImageView message_image;
+    private String userId;
+    private EditText txtMessage;
+    private ImageButton sendMessage;
+    private ImageView SendImageMessage;
+    private ImageView message_image;
+    private SwipeRefreshLayout refreshLayout;
 private RecyclerView recyclerMesseges;
 private MessageRecyclerAdapter messageRecyclerAdapter;
     private final List<Message> msgList = new ArrayList<>();
-    private FirebaseDatabase dbtest = FirebaseDatabase.getInstance();
 
-    private int testcount =0;
+
+
+
 
     private  FirebaseAuth auth = FirebaseAuth.getInstance();
   //  private DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("messeges").push();;
@@ -82,12 +85,32 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
       txtMessage = findViewById(R.id.send_message_text);
          sendMessage = findViewById(R.id.send_message);
         SendImageMessage= findViewById(R.id.send_message_image);
+        refreshLayout = findViewById(R.id.swipe_msg_list);
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         recyclerMesseges = findViewById(R.id.chat_messages);
         LinearLayoutManager manager =new LinearLayoutManager(this);
         recyclerMesseges.setLayoutManager(manager);
-        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId,getApplicationContext());
+        MessageRecyclerAdapter.profileImageClick listener = new MessageRecyclerAdapter.profileImageClick() {
+            @Override
+            public void profileclick(View v, int position) {
+
+                if(v.getId() == R.id.profie_message){
+              String userId =       msgList.get(position).getSender_id();
+
+
+              Intent i = new Intent(getApplicationContext(),Profile_Act.class);
+              i.putExtra("userId",userId);
+                    startActivity(i);
+
+
+                    Toast.makeText(Chat_room_act.this, "Clicked From ChatroomAct"+userId, Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        };
+        messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId,getApplicationContext(),listener);
            // manager.setReverseLayout(true);,g
             recyclerMesseges.setAdapter(messageRecyclerAdapter);
         db= new DBUtil();
@@ -111,6 +134,22 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         }
 
 
+        initUi();
+
+       getTextMesseges();
+    }
+
+    private void initUi() {
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                currentPage++;
+                msgList.clear();
+                getTextMesseges();
+
+            }
+        });
         SendImageMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,8 +174,6 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
             }
         });
-
-       getTextMesseges();
     }
 
 
@@ -153,6 +190,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             switch(item.getItemId()){
 
                 case R.id.add_people:
+
 
                 addPeopleDialog();
 
@@ -190,7 +228,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         // final List<Message> msgList = new ArrayList<>();
 
 
-                db.getMessegesFromRoom(roomId, new ChildEventListener() {
+                db.getMessegesFromRoom(roomId,total_items_load,currentPage, new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Message message = dataSnapshot.getValue(Message.class);
@@ -198,6 +236,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                             messageRecyclerAdapter.notifyDataSetChanged();
                             recyclerMesseges.scrollToPosition(msgList.size()-1);
                         recyclerMesseges.setItemViewCacheSize(9);
+                        refreshLayout.setRefreshing(false);
 
                     }
 

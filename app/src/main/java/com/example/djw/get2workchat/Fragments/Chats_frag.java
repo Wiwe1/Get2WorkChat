@@ -98,6 +98,7 @@ public class Chats_frag extends Fragment {
 
                 }
 
+
                 chatAdapter = new chatAdapter(getContext(),rooms,listener);
                 chatRooms.setAdapter(chatAdapter);
 
