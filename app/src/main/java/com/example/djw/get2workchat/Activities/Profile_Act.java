@@ -75,8 +75,9 @@ private String userId;
         profile_profession = (EditText) findViewById(R.id.profile_professions);
         profile_image = (ImageView) findViewById(R.id.profile_picture);
         btn_save = (Button) findViewById(R.id.btn_save);
+        LockUI();
 
-
+/*
 
         profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +88,9 @@ private String userId;
                 startActivityForResult(intent, 1);
             }
         });
-        btn_save.setVisibility(View.GONE);
+
+  */
+       /*
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +100,7 @@ private String userId;
 
             }
         });
-
+*/
         // Gets the RoomId and Name passed via an Intent from the fragment.
         Bundle extras = getIntent().getExtras();
 
@@ -110,7 +113,38 @@ private String userId;
 
         getUserDetails();
 
+
     }
+
+
+
+
+    private void LockUI(){
+
+        btn_save.setVisibility(View.GONE);
+        profile_email.setFocusable(false);
+        profile_email.setFocusableInTouchMode(false);
+        profile_email.setClickable(false);
+
+
+        profile_email.setFocusable(false);
+        profile_email.setFocusableInTouchMode(false);
+        profile_email.setClickable(false);
+
+        profile_phone.setFocusable(false);
+        profile_phone.setFocusableInTouchMode(false);
+        profile_phone.setClickable(false);
+
+        profile_profession.setFocusable(false);
+        profile_profession.setFocusableInTouchMode(false);
+        profile_profession.setClickable(false);
+
+        profile_email.setFocusable(false);
+        profile_email.setFocusableInTouchMode(false);
+        profile_email.setClickable(false);
+
+    }
+
 
 
     private void saveUserDetails() {

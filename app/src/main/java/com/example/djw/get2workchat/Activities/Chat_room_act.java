@@ -52,21 +52,25 @@ import java.util.List;
 import java.util.UUID;
 
 public class Chat_room_act extends AppCompatActivity {
-    private  static int total_items_load = 10;
-    private int currentPage =1;
+
     private static final String room_id = "room_id";
     private static final String room_name = "room_name";
+
     private Uri resulturi;
     private String roomId;
     private String roomName;
     private DBUtil db;
     private String userId;
+
+
     private EditText txtMessage;
     private ImageButton sendMessage;
     private ImageView SendImageMessage;
     private ImageView message_image;
     private SwipeRefreshLayout refreshLayout;
-private RecyclerView recyclerMesseges;
+
+
+    private RecyclerView recyclerMesseges;
 private MessageRecyclerAdapter messageRecyclerAdapter;
     private final List<Message> msgList = new ArrayList<>();
 
@@ -75,7 +79,15 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
 
     private  FirebaseAuth auth = FirebaseAuth.getInstance();
-  //  private DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("messeges").push();;
+
+
+   //Pagination
+    private int itemPos=0;
+    private String LastKey="";
+    private  static int total_items_load = 10;
+    private int currentPage =1;
+
+    //  private DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("messeges").push();;
 
 
     @Override
@@ -145,8 +157,9 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             @Override
             public void onRefresh() {
                 currentPage++;
-                msgList.clear();
-                getTextMesseges();
+                itemPos = 0;
+
+              getMoreTextMessages();
 
             }
         });
@@ -222,6 +235,52 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     }
 
 
+    public void getMoreTextMessages(){
+
+
+            db.getMoreMessages(roomId, LastKey, new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    Message message = dataSnapshot.getValue(Message.class);
+
+                    msgList.add(itemPos++,message);
+                    if(itemPos ==1){
+                        String messageKey = dataSnapshot.getKey();
+                        LastKey = messageKey;
+
+                    }
+
+                    messageRecyclerAdapter.notifyDataSetChanged();
+                    recyclerMesseges.scrollToPosition(msgList.size()-1);
+                    refreshLayout.setRefreshing(false);
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+    }
+
 
     public void getTextMesseges(){
 
@@ -232,10 +291,19 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Message message = dataSnapshot.getValue(Message.class);
+                      
+                      itemPos++;
+
+                      if(itemPos ==1){
+
+                          String messageKey = dataSnapshot.getKey();
+                          LastKey = messageKey;
+                      }
+                        
                         msgList.add(message);
                             messageRecyclerAdapter.notifyDataSetChanged();
                             recyclerMesseges.scrollToPosition(msgList.size()-1);
-                        recyclerMesseges.setItemViewCacheSize(9);
+                    //    recyclerMesseges.setItemViewCacheSize(9);
                         refreshLayout.setRefreshing(false);
 
                     }
