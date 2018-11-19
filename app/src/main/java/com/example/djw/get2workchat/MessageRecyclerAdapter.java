@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -24,12 +26,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MessageRecyclerAdapter extends RecyclerView.Adapter {
+public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filterable {
     private DBUtil db;
     private static final int SENT = 0;
     private static final int RECEIVED = 1;
@@ -37,9 +40,12 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
 
     private  String userId;
     private List<Message> messages;
+    private List<Message> orig;
     private Context mcontext;
     private  profileImageClick listener;
     private RequestManager glide;
+
+
 
 
     public interface profileImageClick{
@@ -130,6 +136,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
                 SendMessageHolder vh = (SendMessageHolder) viewHolder;
                 if(messages.get(i).getType().equals("text")){
                     vh.imagemessage.setVisibility(View.GONE);
+                    vh.textmessage.setVisibility(View.VISIBLE);
                         if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
                         //  vh.textmessage_num.setText("");
                        vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
@@ -139,7 +146,8 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
                    // vh.imagemessage.setVisibility(View.GONE);
                 }
                 else if(messages.get(i).getType().equals("image")){
-                    vh.textmessage.setText("");
+                    vh.textmessage.setVisibility(View.GONE);
+                  // vh.textmessage.setText("");
                     vh.imagemessage.setVisibility(View.VISIBLE);
                     vh.imagemessage.setImageResource(0);
                     //vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
@@ -226,7 +234,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
 
-        return messages.size();
+            return messages.size();
     }
 
 
@@ -250,6 +258,56 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
     public long getItemId(int position) {
 
         return super.getItemId(position);
+    }
+    @Override
+    public Filter getFilter() {
+
+        return  new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                final  FilterResults oReturn = new FilterResults();
+               final ArrayList<Message> resultls = new ArrayList<Message>();
+
+                if(orig == null)
+                    orig = messages;
+                    if(constraint!=null){
+                        if(orig!=null && orig.size()>0){
+                            for(final Message msg: orig){
+
+                                    msg.getMessage_number();
+                                if(msg.getMessage_number().toString().contains(constraint)){
+
+                                    resultls.add(msg);
+
+                                }
+
+
+                            }
+                            oReturn.values  = resultls;
+
+                        }
+
+
+
+                    }
+
+
+                return oReturn;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+
+
+                messages = (ArrayList<Message>) results.values;
+                notifyDataSetChanged();
+
+            }
+        };
+
+
+
     }
 
     class SendMessageHolder extends RecyclerView.ViewHolder {

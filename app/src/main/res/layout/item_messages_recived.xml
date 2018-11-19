@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -15,6 +14,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/text_message_send"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,13 +22,13 @@
         android:id="@+id/text_message_recieved"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="308dp"
-        android:layout_marginRight="308dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/rounded_rectangle_orange"
         android:padding="8dp"
         android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profie_message"
         app:layout_constraintTop_toTopOf="parent">
 
     </TextView>
@@ -37,28 +37,31 @@
         android:id="@+id/text_message_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="36dp"
         android:padding="8dp"
         android:paddingTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/text_message_recieved"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.163" />
+        app:layout_constraintBottom_toTopOf="@+id/send_message_image"
+        app:layout_constraintEnd_toStartOf="@+id/text_message_recieved"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/profie_message" />
 
     <ImageView
         android:id="@+id/send_message_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="end"
-        android:layout_marginTop="16dp"
 
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_message_send" />
+        app:layout_constraintTop_toBottomOf="@+id/text_message_recieved" />
 
 
 </android.support.constraint.ConstraintLayout>

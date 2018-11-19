@@ -1,6 +1,8 @@
 package com.example.djw.get2workchat.Activities;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,12 +72,13 @@ public class Chat_room_act extends AppCompatActivity {
     private ImageButton sendMessage;
     private ImageView SendImageMessage;
     private ImageView message_image;
+    private Toolbar tbar ;
     private SwipeRefreshLayout refreshLayout;
 
 
     private RecyclerView recyclerMesseges;
 private MessageRecyclerAdapter messageRecyclerAdapter;
-    private final List<Message> msgList = new ArrayList<>();
+    private final ArrayList<Message> msgList = new ArrayList<>();
 
 
 
@@ -87,20 +93,38 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     private  static int total_items_load = 10;
     private int currentPage =1;
 
-    //  private DatabaseReference hej =   dbtest.getReference("chatrooms").child(roomId).child("messeges").push();;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room_act);
+
+
+        // Gets the RoomId and Name passed via an Intent from the fragment.
+        Bundle extras = getIntent().getExtras();
+
+
+        if(extras!= null){
+            roomId = extras.getString(room_id,"");
+            roomName = extras.getString(room_name, "");
+
+            Log.d(roomId, "onCreate: EXTRAS");
+            Log.d(roomName, "onCreate: EXTRAS");
+        }
+
+        if(getSupportActionBar()!=null){
+            setTitle(roomName);
+           getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.purple)));
+        }
+
       txtMessage = findViewById(R.id.send_message_text);
          sendMessage = findViewById(R.id.send_message);
         SendImageMessage= findViewById(R.id.send_message_image);
         refreshLayout = findViewById(R.id.swipe_msg_list);
 
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         recyclerMesseges = findViewById(R.id.chat_messages);
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         LinearLayoutManager manager =new LinearLayoutManager(this);
         recyclerMesseges.setLayoutManager(manager);
         MessageRecyclerAdapter.profileImageClick listener = new MessageRecyclerAdapter.profileImageClick() {
@@ -128,22 +152,6 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         db= new DBUtil();
 
 
-        // Gets the RoomId and Name passed via an Intent from the fragment.
-        Bundle extras = getIntent().getExtras();
-
-
-        if(extras!= null){
-         roomId = extras.getString(room_id,"");
-         roomName = extras.getString(room_name, "");
-
-            Log.d(roomId, "onCreate: EXTRAS");
-            Log.d(roomName, "onCreate: EXTRAS");
-        }
-
-        if(getSupportActionBar()!=null){
-            setTitle(roomName);
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.purple)));
-        }
 
 
         initUi();
@@ -194,7 +202,59 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.add_people_menu,menu);
+
+        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView)menu.findItem(R.id.search_chat).getActionView();
+        searchView.setOnQueryTextListener(onQueryTextListener());
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private SearchView.OnQueryTextListener onQueryTextListener() {
+        return  new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                if(TextUtils.isEmpty(s) ){
+
+                    messageRecyclerAdapter.getFilter().filter("");
+
+                }else{
+
+                    messageRecyclerAdapter.getFilter().filter(s);
+
+
+                }
+
+                return true;
+
+
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+               return  false;
+               /*
+                int position =0;
+                while (position<msgList.size()-1){
+
+                    if(msgList.get(position).getMessage_number().toString().contains(s)){
+
+                        recyclerMesseges.smoothScrollToPosition(position);
+                        break;
+
+                    }else{
+                        position++;
+                    }
+
+                }
+
+                return false;
+            */
+            }
+
+        };
+
     }
 
     @Override

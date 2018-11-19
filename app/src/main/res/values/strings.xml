@@ -12,5 +12,6 @@
     <string name="profile_email_text">Skriv dit email</string>
     <string name="profile_phone_number_text">Skriv dit telefonnummer</string>
     <string name="message_menu_profile">Profile</string>
+    <string name="search_chat">Skriv hvad du vil søge på</string>
 
 </resources>

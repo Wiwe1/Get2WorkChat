@@ -16,15 +16,11 @@ import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.Fragments.Profile_frag;
 import com.example.djw.get2workchat.Fragments.Chats_frag;
-import com.example.djw.get2workchat.Fragments.Contacts_frag;
 import com.example.djw.get2workchat.R;
 import com.example.djw.get2workchat.ViewPagerAdapter;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -66,20 +62,7 @@ public class Main_act extends AppCompatActivity {
 
      DBUtil db = new DBUtil();
 
-//db.updateCount("");
-   //  db.getUserRooms();
 
-        db.getUserById("test", new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
       //  testUsr = new User("bob",null);
 
@@ -96,7 +79,7 @@ public class Main_act extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_menu,menu);
+        inflater.inflate(R.menu.main_menu,menu);
 
 
         return super.onCreateOptionsMenu(menu);
@@ -124,9 +107,6 @@ public class Main_act extends AppCompatActivity {
                         });
 
 
-
-            case R.id.action_profile:
-                   startActivity(new Intent(Main_act.this,Profile_Act.class));
 
                 default:
                     return super.onOptionsItemSelected(item);

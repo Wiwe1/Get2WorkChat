@@ -546,7 +546,7 @@ removeRoom .removeValue()
 
         DatabaseReference messageRef = db.getReference("chatrooms").child(roomId).child("messeges");
         Query getMesseges = messageRef.orderByKey().endAt(key).limitToLast(10);
-        getMesseges.addChildEventListener(listener);
+           getMesseges.addChildEventListener(listener);
 
     }
 
