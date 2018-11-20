@@ -30,6 +30,7 @@
             android:theme="@style/AppThemeActionBar" />
 
         <activity android:name=".Activities.Chat_room_act"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppThemeActionBar">
 
         </activity>

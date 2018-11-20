@@ -74,6 +74,7 @@ public class Chat_room_act extends AppCompatActivity {
     private ImageView message_image;
     private Toolbar tbar ;
     private SwipeRefreshLayout refreshLayout;
+    private  SearchView searchView;
 
 
     private RecyclerView recyclerMesseges;
@@ -210,6 +211,13 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onBackPressed() {
+
+
+        super.onBackPressed();
+    }
+
     private SearchView.OnQueryTextListener onQueryTextListener() {
         return  new SearchView.OnQueryTextListener() {
             @Override
@@ -254,6 +262,9 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             }
 
         };
+
+
+
 
     }
 

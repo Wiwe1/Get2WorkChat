@@ -130,7 +130,6 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
         switch (viewHolder.getItemViewType()){
 
 
-
             case SENT:
                 Log.d("TYPE","MESSAGETYPE"+messages.get(i).getMessage().toString());
                 SendMessageHolder vh = (SendMessageHolder) viewHolder;
@@ -233,7 +232,6 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
     @Override
     public int getItemCount() {
-
             return messages.size();
     }
 
@@ -265,33 +263,23 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
         return  new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String charString = constraint.toString();
                 final  FilterResults oReturn = new FilterResults();
-               final ArrayList<Message> resultls = new ArrayList<Message>();
-
-                if(orig == null)
-                    orig = messages;
-                    if(constraint!=null){
-                        if(orig!=null && orig.size()>0){
-                            for(final Message msg: orig){
-
-                                    msg.getMessage_number();
-                                if(msg.getMessage_number().toString().contains(constraint)){
-
-                                    resultls.add(msg);
-
-                                }
+                oReturn.values = messages;
+                oReturn.count = messages.size();
 
 
+
+                if(constraint.length()>0){
+                    final ArrayList<Message> resultls = new ArrayList<Message>();
+                        for(final Message msg: messages){
+                            if((msg.getMessage_number()!=null && msg.getMessage_number().toString().contains(constraint)))  {
+                                resultls.add(msg);
                             }
-                            oReturn.values  = resultls;
 
                         }
-
-
-
-                    }
-
+                    oReturn.values = resultls;
+                    oReturn.count = resultls.size();
+                }
 
                 return oReturn;
             }
@@ -299,6 +287,9 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
+                if(results.count==0){
+
+                }
 
                 messages = (ArrayList<Message>) results.values;
                 notifyDataSetChanged();
