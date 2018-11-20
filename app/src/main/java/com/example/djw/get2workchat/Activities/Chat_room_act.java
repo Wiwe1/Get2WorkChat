@@ -215,6 +215,13 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     public void onBackPressed() {
 
 
+        if(!searchView.isIconified()){
+
+            searchView.setIconified(true);
+            return;
+        }
+
+
         super.onBackPressed();
     }
 
@@ -222,48 +229,20 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         return  new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                if(TextUtils.isEmpty(s) ){
-
-                    messageRecyclerAdapter.getFilter().filter("");
-
-                }else{
 
                     messageRecyclerAdapter.getFilter().filter(s);
-
-
-                }
-
-                return true;
-
-
+                return false;
 
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-               return  false;
-               /*
-                int position =0;
-                while (position<msgList.size()-1){
+                    messageRecyclerAdapter.getFilter().filter(s);
+                    return  false;
 
-                    if(msgList.get(position).getMessage_number().toString().contains(s)){
-
-                        recyclerMesseges.smoothScrollToPosition(position);
-                        break;
-
-                    }else{
-                        position++;
-                    }
-
-                }
-
-                return false;
-            */
             }
 
         };
-
-
 
 
     }

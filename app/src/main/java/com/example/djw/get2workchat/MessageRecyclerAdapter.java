@@ -39,6 +39,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
 
     private  String userId;
+
     private List<Message> messages;
     private List<Message> orig;
     private Context mcontext;
@@ -61,6 +62,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
         this.messages = messages;
         this.mcontext = mcontext;
         this.listener = listener;
+        this.orig = messages;
     }
 
     @NonNull
@@ -268,8 +270,15 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
                 oReturn.count = messages.size();
 
 
+                if(constraint.length() ==0){
 
-                if(constraint.length()>0){
+                    messages = orig;
+
+                }
+
+
+
+                else {
                     final ArrayList<Message> resultls = new ArrayList<Message>();
                         for(final Message msg: messages){
                             if((msg.getMessage_number()!=null && msg.getMessage_number().toString().contains(constraint)))  {
@@ -277,19 +286,19 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
                             }
 
                         }
-                    oReturn.values = resultls;
-                    oReturn.count = resultls.size();
+
+                  messages= resultls;
+
                 }
 
+                oReturn.values = messages;
+                oReturn.count = messages.size();
                 return oReturn;
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
-                if(results.count==0){
-
-                }
 
                 messages = (ArrayList<Message>) results.values;
                 notifyDataSetChanged();
