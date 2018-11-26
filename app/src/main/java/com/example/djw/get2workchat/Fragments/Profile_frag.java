@@ -43,10 +43,13 @@ public class Profile_frag extends Fragment {
 
     private FirebaseDatabase db;
     private DatabaseReference myref;
+    private DBUtil  dbUtil;
+
     private EditText profile_name, profile_email, profile_phone, profile_profession;
 
     private ImageView profile_image;
     private Button btn_save;
+
     private FirebaseAuth mAuth;
     private String UserID;
     private Uri resulturi;
@@ -61,13 +64,15 @@ public class Profile_frag extends Fragment {
         v = inflater.inflate(R.layout.frag_profile,container,false);
 
        mAuth = FirebaseAuth.getInstance();
-
-
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UserID = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+
         myref = db.getReference("users").child(UserID);
+
+    dbUtil = new DBUtil();
+
+
         profile_name = (EditText) v.findViewById(R.id.profile_name);
         profile_email = (EditText) v.findViewById(R.id.profile_email);
         profile_phone = (EditText) v.findViewById(R.id.profile_phone_number);
@@ -108,8 +113,12 @@ public class Profile_frag extends Fragment {
         String phone = profile_phone.getText().toString();
         String proff = profile_profession.getText().toString();
 
-        final DBUtil db = new DBUtil();
-        db.updateUser(name, mail,phone,proff, null);
+
+        try {
+            dbUtil.updateUser(name, mail,phone,proff, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (resulturi != null) {
 
@@ -141,7 +150,7 @@ public class Profile_frag extends Fragment {
                             newImage.put("profilePicturePath", uri.toString());
 
 
-                            db.updateUser(null, null, null, null, uri.toString());
+                            dbUtil.updateUser(null, null, null, null, uri.toString());
                         //    finish();
                             return;
                         }
@@ -165,6 +174,50 @@ public class Profile_frag extends Fragment {
 
     private void getUserDetails() {
 
+        dbUtil.getUserById(UserID, new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
+                if (dataSnapshot.exists()) {
+
+                    //    User user = dataSnapshot.getValue(User.class);
+                    Map<String, Object> UserInfo = (Map<String, Object>) dataSnapshot.getValue();
+                    if (UserInfo.get("userName") != null) {
+                        String UserNmame = UserInfo.get("userName").toString();
+                        profile_name.setText(UserNmame);
+                    }
+                    if (UserInfo.get("email") != null) {
+                        String email = UserInfo.get("email").toString();
+                        profile_email.setText(email);
+                    }
+                    if (UserInfo.get("profilePicturePath") != null) {
+                        String profilepicture = UserInfo.get("profilePicturePath").toString();
+                        Glide.with(getContext()).load(profilepicture).into(profile_image);
+
+                        if (UserInfo.get("profession") != null) {
+
+                            String profession = UserInfo.get("profession").toString();
+                            profile_profession.setText(profession);
+
+                        }
+
+
+
+
+                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+/*
         myref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -190,14 +243,14 @@ public class Profile_frag extends Fragment {
                             profile_profession.setText(profession);
 
                         }
-                    /*
+
 
                     profile_name.setText(user.getUserName());
                     profile_email.setText(user.getEmail());
                     profile_phone.setText(user.getPhone_number());
                     profilePicturePath = user.getProfilePicturePath();
                     profile_profession.setText(user.getProfession());
-                   */
+
                         //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
 
                     }
@@ -209,7 +262,7 @@ public class Profile_frag extends Fragment {
 
             }
         });
-
+*/
     }
 
     @Override

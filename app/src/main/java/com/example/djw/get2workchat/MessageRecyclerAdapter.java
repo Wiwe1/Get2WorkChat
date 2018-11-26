@@ -133,20 +133,45 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
 
             case SENT:
+
+
                 Log.d("TYPE","MESSAGETYPE"+messages.get(i).getMessage().toString());
                 SendMessageHolder vh = (SendMessageHolder) viewHolder;
+
+
+
                 if(messages.get(i).getType().equals("text")){
-                    vh.imagemessage.setVisibility(View.GONE);
-                    vh.textmessage.setVisibility(View.VISIBLE);
-                        if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
+
+                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
                         //  vh.textmessage_num.setText("");
-                       vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+                        vh.textmessage.setVisibility(View.VISIBLE);
+                        vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+                    }else{
+
+                        vh.textmessage_num.setText("");
+
                     }
 
+                    vh.imagemessage.setVisibility(View.GONE);
+                    vh.textmessage.setVisibility(View.VISIBLE);
                     vh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
                    // vh.imagemessage.setVisibility(View.GONE);
                 }
                 else if(messages.get(i).getType().equals("image")){
+
+                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
+
+                        vh.textmessage.setVisibility(View.VISIBLE);
+                   String num =      messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString();
+                        vh.textmessage_num.setVisibility(View.VISIBLE);
+                        vh.textmessage_num.setText(num);
+                    }else{
+
+                        vh.textmessage_num.setText("");
+
+                    }
+
+
                     vh.textmessage.setVisibility(View.GONE);
                   // vh.textmessage.setText("");
                     vh.imagemessage.setVisibility(View.VISIBLE);
@@ -168,64 +193,42 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
                 if(messages.get(i).getType().equals("text")){
                     receivedVh.imagemessage.setVisibility(View.GONE);
-                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
+                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null) {
+
                         //receivedVh.textmessage_num.setText("");
-                        //receivedVh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+                        receivedVh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+                    }else{
+
+                        receivedVh.textmessage_num.setVisibility(View.INVISIBLE);
+
                     }
+
                     receivedVh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
                   //  ((ReceivedMessageHolder)viewHolder).bind(messages.get(i));
-                    break;
+
                 }else if (messages.get(i).getType().equals("image")){
 
+
+
+                    receivedVh.textmessage_num.setVisibility(View.VISIBLE);
+                    receivedVh.textmessage_num.setText("ost ");
                     receivedVh.textmessage.setText("");
                     receivedVh.imagemessage.setVisibility(View.VISIBLE);
                     receivedVh.imagemessage.setImageResource(0);
 
                         glide.load(messages.get(i).getMessage().toString()).into(receivedVh.imagemessage);
-                        break;
+
 
                     }
+                break;
 
         }
 
 
-
     }
 
-    private void profilePopup(@NonNull final RecyclerView.ViewHolder viewHolder, final ReceivedMessageHolder receivedVh) {
-        receivedVh.profileimage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(mcontext, "ClickdProfile "+messages.get(viewHolder.getAdapterPosition()).getSender_id(), Toast.LENGTH_SHORT).show();
-
-                PopupMenu pop =  new PopupMenu(mcontext,receivedVh.profileimage);
-
-                pop.inflate(R.menu.message_menu);
-
-                pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-
-                        switch (item.getItemId()){
-
-                            case R.id.message_menu_profile:
-                                Intent i = new Intent(mcontext,Profile_Act.class);
-                                i.putExtra("UserId",messages.get(viewHolder.getAdapterPosition()).getSender_id());
-                                mcontext.startActivity(i);
-                                break;
-                        }
-
-                        return false;
-                    }
-                });
-
-                pop.show();
 
 
-                return  false;
-            }
-        });
-    }
 
     @Override
     public void setHasStableIds(boolean hasStableIds) {
@@ -335,10 +338,11 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
         public ReceivedMessageHolder(@NonNull View itemView) {
             super(itemView);
+
             textmessage = itemView.findViewById(R.id.text_message_recieved);
             imagemessage = itemView.findViewById(R.id.send_message_image);
             profileimage = itemView.findViewById(R.id.profie_message);
-
+            textmessage_num= itemView.findViewById(R.id.text_message_number);
 
                     profileimage.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
@@ -360,7 +364,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
                 }
             });
 */
-            textmessage_num= itemView.findViewById(R.id.text_message_number);
+
 
 
         }

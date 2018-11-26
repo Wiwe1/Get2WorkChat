@@ -1,17 +1,20 @@
 package com.example.djw.get2workchat.Fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.djw.get2workchat.Activities.Chat_room_act;
@@ -128,8 +131,42 @@ public class Chats_frag extends Fragment {
                 Toast.makeText(getContext(), "Clicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
 
             }
+
+            @Override
+            public void OnLongclick(Chat_room chat_room) {
+
+                deleteRoomDialog(chat_room.getId().toString());
+                Toast.makeText(getContext(), "OnLongClicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
+
+            }
         };
 
+
+    private void deleteRoomDialog(final String room_id){
+
+        // Setups up a dialo window for deleting a room
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.deleteRoom_dialog_title  );
+
+
+
+
+        builder.setPositiveButton(R.string.deleteRoom_dialog_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                db.deleteRoom(room_id);
+
+
+            }
+        }).setNegativeButton(R.string.deleteRoon_dialog_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).show();
+
+    }
 
 }
 

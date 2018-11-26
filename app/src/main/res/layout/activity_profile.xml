@@ -29,7 +29,7 @@
                 android:src="@drawable/baseline_account_circle_black_18dp"/>
 
 
-            <EditText
+            <TextView
                 android:id="@+id/profile_name"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                     android:layout_height="36dp"
                     app:srcCompat="@drawable/baseline_work_24" />
 
-                <EditText
+                <TextView
                     android:id="@+id/profile_professions"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
@@ -84,7 +84,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 app:srcCompat="@drawable/ic_phone_android_black_24dp"/>
-            <EditText
+            <TextView
                 android:id="@+id/profile_phone_number"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
@@ -105,7 +105,7 @@
                 android:layout_height="36dp"
                 app:srcCompat="@drawable/ic_email_black_24dp"/>
 
-            <EditText
+            <TextView
                 android:id="@+id/profile_email"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
@@ -117,12 +117,5 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_save"
-        android:text="Save"
-        android:background="@color/colorPrimaryDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

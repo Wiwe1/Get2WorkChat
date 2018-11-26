@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/purple</item>
         <item name="colorPrimaryDark">@color/dark_purple</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:actionMenuTextColor">@color/graylight</item>
     </style>
 
 

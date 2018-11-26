@@ -90,6 +90,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
    //Pagination
     private int itemPos=0;
+    private  String LastPrevKey ="";
     private String LastKey="";
     private  static int total_items_load = 10;
     private int currentPage =1;
@@ -208,22 +209,14 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         SearchView searchView = (SearchView)menu.findItem(R.id.search_chat).getActionView();
         searchView.setOnQueryTextListener(onQueryTextListener());
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public void onBackPressed() {
 
-
-        if(!searchView.isIconified()){
-
-            searchView.setIconified(true);
-            return;
-        }
-
-
-        super.onBackPressed();
-    }
 
     private SearchView.OnQueryTextListener onQueryTextListener() {
         return  new SearchView.OnQueryTextListener() {
@@ -293,10 +286,18 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                     Message message = dataSnapshot.getValue(Message.class);
+                    String messageKey = dataSnapshot.getKey();
+                  if(!LastPrevKey.equals(messageKey)){
+                      msgList.add(itemPos++,message);
+                  }else{
 
-                    msgList.add(itemPos++,message);
+                      LastPrevKey=LastKey ;
+
+                  }
+
+
                     if(itemPos ==1){
-                        String messageKey = dataSnapshot.getKey();
+
                         LastKey = messageKey;
 
                     }
@@ -348,6 +349,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
                           String messageKey = dataSnapshot.getKey();
                           LastKey = messageKey;
+                          LastPrevKey = messageKey;
                       }
                         
                         msgList.add(message);

@@ -20,10 +20,11 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
     private List<Chat_room>  chatrooms;
     private Context mContext;
     private  OnChatRoomClick listener;
-    private DBUtil db;
+   // private DBUtil db;
      public  interface OnChatRoomClick{
 
         void onClick(Chat_room chat_room);
+        void OnLongclick(Chat_room chat_room);
 
     }
 
@@ -41,7 +42,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
     @NonNull
     @Override
     public chatAdapter.chatViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-       db= new DBUtil();
+     //  db= new DBUtil();
          View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_chat_room,viewGroup,false);
         return new chatViewHolder(v);
     }
@@ -49,7 +50,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
     @Override
     public void onBindViewHolder(@NonNull final chatViewHolder chatViewHolder, final int position) {
 
-        chatViewHolder.bind(chatrooms.get(position));
+        chatViewHolder.bind(chatrooms.get(chatViewHolder.getAdapterPosition()));
+/*
         chatViewHolder.room_options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +67,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
                         switch (item.getItemId()){
 
                             case R.id.delete_room:
-                                Toast.makeText(mContext, "clicked"+chatrooms.get(chatViewHolder.getAdapterPosition()).getName(), Toast.LENGTH_SHORT).show();
+                               // Toast.makeText(mContext, "clicked"+chatrooms.get(chatViewHolder.getAdapterPosition()).getName(), Toast.LENGTH_SHORT).show();
                                 db.deleteRoom(chatrooms.get(chatViewHolder.getAdapterPosition()).getId());
                                 chatrooms.remove(chatViewHolder.getAdapterPosition());
                                 notifyItemRemoved(chatViewHolder.getAdapterPosition());
@@ -80,7 +82,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
             }
 
         });
-
+*/
 
     }
 
@@ -105,6 +107,13 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
                 this.room = room;
             name.setText(room.getName());
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    listener.OnLongclick(room);
+                    return false;
+                }
+            });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

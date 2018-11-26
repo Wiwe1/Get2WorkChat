@@ -47,10 +47,9 @@ public class Profile_Act extends AppCompatActivity {
 
     private FirebaseDatabase db;
     private DatabaseReference myref;
-    private EditText profile_name, profile_email, profile_phone, profile_profession;
+    private TextView profile_name, profile_email, profile_phone, profile_profession;
 
     private ImageView profile_image;
-    private Button btn_save;
     private FirebaseAuth mAuth;
   //  private String UserID;
     private Uri resulturi;
@@ -69,38 +68,14 @@ private String userId;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbUtil = new DBUtil();
 
-        profile_name = (EditText) findViewById(R.id.profile_name);
-        profile_email = (EditText) findViewById(R.id.profile_email);
-        profile_phone = (EditText) findViewById(R.id.profile_phone_number);
-        profile_profession = (EditText) findViewById(R.id.profile_professions);
+        profile_name = (TextView) findViewById(R.id.profile_name);
+        profile_email = (TextView) findViewById(R.id.profile_email);
+        profile_phone = (TextView) findViewById(R.id.profile_phone_number);
+        profile_profession = (TextView) findViewById(R.id.profile_professions);
         profile_image = (ImageView) findViewById(R.id.profile_picture);
-        btn_save = (Button) findViewById(R.id.btn_save);
-        LockUI();
-
-/*
-
-        profile_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, 1);
-            }
-        });
-
-  */
-       /*
-        btn_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
 
-                saveUserDetails();
 
-            }
-        });
-*/
         // Gets the RoomId and Name passed via an Intent from the fragment.
         Bundle extras = getIntent().getExtras();
 
@@ -119,34 +94,10 @@ private String userId;
 
 
 
-    private void LockUI(){
-
-        btn_save.setVisibility(View.GONE);
-        profile_email.setFocusable(false);
-        profile_email.setFocusableInTouchMode(false);
-        profile_email.setClickable(false);
-
-
-        profile_email.setFocusable(false);
-        profile_email.setFocusableInTouchMode(false);
-        profile_email.setClickable(false);
-
-        profile_phone.setFocusable(false);
-        profile_phone.setFocusableInTouchMode(false);
-        profile_phone.setClickable(false);
-
-        profile_profession.setFocusable(false);
-        profile_profession.setFocusableInTouchMode(false);
-        profile_profession.setClickable(false);
-
-        profile_email.setFocusable(false);
-        profile_email.setFocusableInTouchMode(false);
-        profile_email.setClickable(false);
-
-    }
 
 
 
+/*
     private void saveUserDetails() {
 
         String name = profile_name.getText().toString();
@@ -209,7 +160,7 @@ private String userId;
 
 
 
-
+*/
 
     private void getUserDetails() {
 
@@ -241,16 +192,8 @@ private String userId;
 
                         }
 
-                        /*
 
-                        profile_name.setText(user.getUserName());
-                        profile_email.setText(user.getEmail());
-                        profile_phone.setText(user.getPhone_number());
-                        profilePicturePath = user.getProfilePicturePath();
-                        profile_profession.setText(user.getProfession());
 
-*/
-                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
                     }
                 }
             }
@@ -290,7 +233,7 @@ private String userId;
 
                         //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
 
-                    }
+                 import   }
                 }
             }
 

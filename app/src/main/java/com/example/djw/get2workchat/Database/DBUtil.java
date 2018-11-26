@@ -235,7 +235,7 @@ public interface firebasCallback{
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                //    chtrom.clear();
+                    //    chtrom.clear();
                 final String groupKey = dataSnapshot.getValue().toString();
 
                 //Gets the rooms which corresponds to those ids.
@@ -557,6 +557,14 @@ removeRoom .removeValue()
 //   Query   getMesseges = db.getReference("messeges").orderByChild("chat_room_id").equalTo(roomid);
       //  Query   getMesseges = db.getReference("messeges").startAt("chat_room_id",roomid );
         getMesseges.addChildEventListener(listener);
+
+    }
+
+    public void searchMessages(String roomId,ValueEventListener listener){
+
+
+
+
 
     }
 
