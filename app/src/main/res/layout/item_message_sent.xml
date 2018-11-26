@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_message_send"
+        android:id="@+id/text_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -29,6 +29,7 @@
         android:layout_marginRight="36dp"
         android:background="@drawable/rounded_rectangle_green"
         android:padding="8dp"
+        android:autoSizeTextType="uniform"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/profie_message"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,23 +41,23 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="20dp"
+        android:autoSizeTextType="uniform"
         android:padding="8dp"
         android:textColor="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/send_message_image"
-        app:layout_constraintStart_toEndOf="@+id/text_message_send" />
+        app:layout_constraintBottom_toTopOf="@+id/message_image"
+        app:layout_constraintStart_toEndOf="@+id/text_message" />
 
     <ImageView
-        android:id="@+id/send_message_image"
+        android:id="@+id/message_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-
         android:layout_marginTop="4dp"
         android:layout_marginEnd="132dp"
         android:layout_marginRight="132dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_message_send" />
+        app:layout_constraintTop_toBottomOf="@+id/text_message" />
 
 
 

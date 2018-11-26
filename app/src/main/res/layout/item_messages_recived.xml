@@ -15,16 +15,17 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@+id/text_message_send"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_message_recieved"
+        android:layout_gravity="fill"
+        android:id="@+id/text_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/rounded_rectangle_orange"
         android:padding="8dp"
         android:textColor="@android:color/black"
@@ -41,16 +42,16 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="12dp"
         android:layout_marginRight="12dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="12dp"
         android:padding="8dp"
         android:paddingTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/send_message_image"
-        app:layout_constraintEnd_toStartOf="@+id/text_message_recieved"
+        app:layout_constraintBottom_toTopOf="@+id/message_image"
+        app:layout_constraintEnd_toStartOf="@+id/text_message"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/profie_message" />
 
     <ImageView
-        android:id="@+id/send_message_image"
+        android:id="@+id/message_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="end"
@@ -61,7 +62,7 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_message_recieved" />
+        app:layout_constraintTop_toBottomOf="@+id/text_message" />
 
 
 </android.support.constraint.ConstraintLayout>

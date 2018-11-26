@@ -1,62 +1,54 @@
 package com.example.djw.get2workchat;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.djw.get2workchat.Activities.Profile_Act;
 import com.example.djw.get2workchat.Data_Models.Message;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filterable {
+    public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecyclerAdapter.ChatViewHolder> implements Filterable {
     private DBUtil db;
     private static final int SENT = 0;
     private static final int RECEIVED = 1;
 
 
-    private  String userId;
+    private String userId;
 
     private List<Message> messages;
     private List<Message> orig;
     private Context mcontext;
-    private  profileImageClick listener;
+    private profileImageClick listener;
     private RequestManager glide;
 
 
+    public interface profileImageClick {
 
-
-    public interface profileImageClick{
-
-        public void profileclick(View v,int position);
+        public void profileclick(View v, int position);
 
     }
 
 
-    public MessageRecyclerAdapter( RequestManager glide, List<Message> messages, String userId,Context mcontext,profileImageClick listener) {
+    public MessageRecyclerAdapter(RequestManager glide, List<Message> messages, String userId, Context mcontext, profileImageClick listener) {
         this.glide = glide;
         this.userId = userId;
         this.messages = messages;
@@ -67,30 +59,30 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         db = new DBUtil();
-        View view = null;
-        SendMessageHolder holder = null;
-        if(viewType == SENT){
+        View view;
+        //  SendMessageHolder holder = null;
+        if (viewType == SENT) {
 
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_sent,viewGroup,false);
-            return new SendMessageHolder(view);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_sent, viewGroup, false);
+            //      return new SendMessageHolder(view);
+        } else {
+
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_messages_recived, viewGroup, false);
+
+            //return new ReceivedMessageHolder (view);
+
         }
-        else if(viewType == RECEIVED) {
 
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_messages_recived,viewGroup,false);
-
-            return new ReceivedMessageHolder (view);
-
-        }
-
-        return null;
+        return new ChatViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final ChatViewHolder chatViewHolder, int i) {
+
 
         Message message = messages.get(i);
 
@@ -108,13 +100,13 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
                 String name = dataSnapshot.child("userName").getValue().toString();
                 String image = dataSnapshot.child("profilePicturePath").getValue().toString();
-                if(viewHolder.getItemViewType() == SENT){
-                    glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_add_photo_alternate_24)).into(((SendMessageHolder)viewHolder).profileimage);
-                //    glide.load(image).into(((SendMessageHolder)viewHolder).profileimage);
+                if (chatViewHolder.getItemViewType() == SENT) {
+                    glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_add_photo_alternate_24)).into(chatViewHolder.profileimage);
+                    //    glide.load(image).into(((SendMessageHolder)viewHolder).profileimage);
 
-                }else{
+                } else {
 
-                    glide.load(image).into(((ReceivedMessageHolder)viewHolder).profileimage);
+                    glide.load(image).into(chatViewHolder.profileimage);
                 }
 
 
@@ -126,108 +118,53 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
             }
         });
 
-        Log.d("Messagenumber", "mesagenum "+  messages.get(i).getMessage_number());
+        Log.d("Messagenumber", "mesagenum " + messages.get(i).getMessage_number());
 
 
-        switch (viewHolder.getItemViewType()){
+        if (messages.get(i).getType().equals("text")) {
+
+            if (messages.get(chatViewHolder.getAdapterPosition()).getMessage_number() != null) {
+                //  vh.textmessage_num.setText("");
+                chatViewHolder.textmessage_num.setVisibility(View.VISIBLE);
+                chatViewHolder.textmessage_num.setText(messages.get(chatViewHolder.getAdapterPosition()).getMessage_number().toString());
+            } else {
+
+                chatViewHolder.textmessage_num.setText("");
+
+            }
+
+            chatViewHolder.imagemessage.setVisibility(View.GONE);
+            chatViewHolder.textmessage.setVisibility(View.VISIBLE);
+            chatViewHolder.textmessage.setText(messages.get(chatViewHolder.getAdapterPosition()).getMessage());
+            // vh.imagemessage.setVisibility(View.GONE);
+        } else if (messages.get(i).getType().equals("image")) {
+
+            if (messages.get(chatViewHolder.getAdapterPosition()).getMessage_number() != null) {
+
+                chatViewHolder.textmessage.setVisibility(View.VISIBLE);
+                String num = messages.get(chatViewHolder.getAdapterPosition()).getMessage_number().toString();
+                chatViewHolder.textmessage_num.setVisibility(View.VISIBLE);
+                chatViewHolder.textmessage_num.setText(num);
+            } else {
+
+                chatViewHolder.textmessage_num.setText("");
+
+            }
 
 
-            case SENT:
+            chatViewHolder.textmessage.setVisibility(View.GONE);
+            // vh.textmessage.setText("");
+            chatViewHolder.imagemessage.setVisibility(View.VISIBLE);
+            chatViewHolder.imagemessage.setImageResource(0);
+            //vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
+            glide.load(messages.get(chatViewHolder.getAdapterPosition()).getMessage().toString()).into(chatViewHolder.imagemessage);
 
 
-                Log.d("TYPE","MESSAGETYPE"+messages.get(i).getMessage().toString());
-                SendMessageHolder vh = (SendMessageHolder) viewHolder;
-
-
-
-                if(messages.get(i).getType().equals("text")){
-
-                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
-                        //  vh.textmessage_num.setText("");
-                        vh.textmessage.setVisibility(View.VISIBLE);
-                        vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
-                    }else{
-
-                        vh.textmessage_num.setText("");
-
-                    }
-
-                    vh.imagemessage.setVisibility(View.GONE);
-                    vh.textmessage.setVisibility(View.VISIBLE);
-                    vh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
-                   // vh.imagemessage.setVisibility(View.GONE);
-                }
-                else if(messages.get(i).getType().equals("image")){
-
-                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null){
-
-                        vh.textmessage.setVisibility(View.VISIBLE);
-                   String num =      messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString();
-                        vh.textmessage_num.setVisibility(View.VISIBLE);
-                        vh.textmessage_num.setText(num);
-                    }else{
-
-                        vh.textmessage_num.setText("");
-
-                    }
-
-
-                    vh.textmessage.setVisibility(View.GONE);
-                  // vh.textmessage.setText("");
-                    vh.imagemessage.setVisibility(View.VISIBLE);
-                    vh.imagemessage.setImageResource(0);
-                    //vh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
-                    glide.load(messages.get(viewHolder.getAdapterPosition()).getMessage().toString()).into(vh.imagemessage);
-
-
-                    // String url = messages.get(i).getMessage().toString().trim(); android:text="hej"
-                }
-                break;
-
-
-            case RECEIVED:
-                final ReceivedMessageHolder receivedVh = (ReceivedMessageHolder)viewHolder;
-
-//                profilePopup(viewHolder, receivedVh);
-
-
-                if(messages.get(i).getType().equals("text")){
-                    receivedVh.imagemessage.setVisibility(View.GONE);
-                    if(messages.get(viewHolder.getAdapterPosition()).getMessage_number()!= null) {
-
-                        //receivedVh.textmessage_num.setText("");
-                        receivedVh.textmessage_num.setText(messages.get(viewHolder.getAdapterPosition()).getMessage_number().toString());
-                    }else{
-
-                        receivedVh.textmessage_num.setVisibility(View.INVISIBLE);
-
-                    }
-
-                    receivedVh.textmessage.setText(messages.get(viewHolder.getAdapterPosition()).getMessage());
-                  //  ((ReceivedMessageHolder)viewHolder).bind(messages.get(i));
-
-                }else if (messages.get(i).getType().equals("image")){
-
-
-
-                    receivedVh.textmessage_num.setVisibility(View.VISIBLE);
-                    receivedVh.textmessage_num.setText("ost ");
-                    receivedVh.textmessage.setText("");
-                    receivedVh.imagemessage.setVisibility(View.VISIBLE);
-                    receivedVh.imagemessage.setImageResource(0);
-
-                        glide.load(messages.get(i).getMessage().toString()).into(receivedVh.imagemessage);
-
-
-                    }
-                break;
-
+            // String url = messages.get(i).getMessage().toString().trim(); android:text="hej"
         }
 
 
     }
-
-
 
 
     @Override
@@ -237,22 +174,21 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
     @Override
     public int getItemCount() {
-            return messages.size();
+        return messages.size();
     }
-
 
 
     @Override
     public int getItemViewType(int position) {
 
-        if(messages.get(position).getSender_id().contentEquals(userId)){
+        if (messages.get(position).getSender_id().contentEquals(userId)) {
 
             Log.d("SENDERID ", "getItemViewType: " + messages.get(position).getSender_id().toString());
             return SENT;
 
-        }else{
+        } else {
             Log.d("SENDERID ", "getItemViewType: " + messages.get(position).getSender_id().toString());
-            return  RECEIVED;
+            return RECEIVED;
 
         }
     }
@@ -262,35 +198,32 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
 
         return super.getItemId(position);
     }
+
     @Override
     public Filter getFilter() {
 
-        return  new Filter() {
+        return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                final  FilterResults oReturn = new FilterResults();
+                final FilterResults oReturn = new FilterResults();
                 oReturn.values = messages;
                 oReturn.count = messages.size();
 
 
-                if(constraint.length() ==0){
+                if (constraint.length() == 0) {
 
                     messages = orig;
 
-                }
-
-
-
-                else {
+                } else {
                     final ArrayList<Message> resultls = new ArrayList<Message>();
-                        for(final Message msg: messages){
-                            if((msg.getMessage_number()!=null && msg.getMessage_number().toString().contains(constraint)))  {
-                                resultls.add(msg);
-                            }
-
+                    for (final Message msg : messages) {
+                        if ((msg.getMessage_number() != null && msg.getMessage_number().toString().contains(constraint))) {
+                            resultls.add(msg);
                         }
 
-                  messages= resultls;
+                    }
+
+                    messages = resultls;
 
                 }
 
@@ -310,25 +243,25 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
         };
 
 
-
     }
 
-    class SendMessageHolder extends RecyclerView.ViewHolder {
-        public  TextView textmessage_num;
+    class ChatViewHolder extends RecyclerView.ViewHolder {
+        public TextView textmessage_num;
         public TextView textmessage;
-        public   ImageView imagemessage;
+        public ImageView imagemessage;
         public CircleImageView profileimage;
-        public SendMessageHolder(@NonNull View itemView) {
+
+        public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             profileimage = itemView.findViewById(R.id.profie_message);
-            imagemessage = itemView.findViewById(R.id.send_message_image);
-            textmessage = itemView.findViewById(R.id.text_message_send);
+            imagemessage = itemView.findViewById(R.id.message_image);
+            textmessage = itemView.findViewById(R.id.text_message);
             textmessage_num = itemView.findViewById(R.id.text_message_number);
         }
 
-
     }
-
+}
+/*
 
     class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
         public    TextView textmessage ;
@@ -363,7 +296,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
                     return false;
                 }
             });
-*/
+
 
 
 
@@ -376,42 +309,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter implements Filt
         }
     }
 }
-/*
-class SendMessageHolder extends RecyclerView.ViewHolder {
-    public  TextView textmessage_num;
-    public TextView textmessage;
-    public   ImageView imagemessage;
-    public CircleImageView profileimage;
-    public SendMessageHolder(@NonNull View itemView) {
-        super(itemView);
-        profileimage = itemView.findViewById(R.id.profie_message);
-        imagemessage = itemView.findViewById(R.id.send_message_image);
-        textmessage = itemView.findViewById(R.id.text_message_send);
-        textmessage_num = itemView.findViewById(R.id.text_message_number);
-    }
 
 
-}
-*/
-/*
-class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
- public    TextView textmessage ;
-    public ImageView imagemessage;
-    public ImageView profileimage;
-    public TextView textmessage_num;
-
-    public ReceivedMessageHolder(@NonNull View itemView) {
-        super(itemView);
-        textmessage = itemView.findViewById(R.id.text_message_recieved);
-        imagemessage = itemView.findViewById(R.id.send_message_image);
-        profileimage = itemView.findViewById(R.id.profie_message);
-        textmessage_num= itemView.findViewById(R.id.text_message_number);
-    }
-
-    void  bind(Message message){
-
-        textmessage.setText(message.getMessage());
-
-    }
 }
 */
