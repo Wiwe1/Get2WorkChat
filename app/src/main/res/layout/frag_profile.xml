@@ -120,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:background="@color/colorPrimaryDark"
-        android:text="Save" />
+        android:background="@color/dark_orage"
+        android:text="@string/profile_save" />
 
 </LinearLayout>

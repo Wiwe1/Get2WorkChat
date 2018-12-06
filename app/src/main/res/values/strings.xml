@@ -7,14 +7,18 @@
     <string name="deleteRoom_dialog_title">Vil du slette dette rum?</string>
     <string name="deleteRoon_dialog_cancel">Nej</string>
     <string name="deleteRoom_dialog_yes">Ja</string>
+    <string name="delete_room">Slet chatrum</string>
     <string name="send_message_hint">Skriv en besked&#8230;</string>
     <string name="send_message_error">Beskedfeltet kan ikke være tomt</string>
     <string name="send_message_failed">Der opstod en fejl og beskeden kunne ikke sendes</string>
-    <string name="delete_room">Slet chatrum</string>
     <string name="profile_profession_text">Skriv dit profession</string>
     <string name="profile_email_text">Skriv dit email</string>
     <string name="profile_phone_number_text">Skriv dit telefonnummer</string>
+    <string name="profile_save">Opdater</string>
     <string name="message_menu_profile">Profile</string>
+    <string name="message_menu_copy">Kopier besked</string>
+    <string name="message_menu_delete">Slet besked</string>
     <string name="search_chat">Skriv hvad du vil søge på</string>
+    <string name="room_leav">Forlad chatrum</string>
 
 </resources>

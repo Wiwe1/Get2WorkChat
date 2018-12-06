@@ -2,13 +2,13 @@ package com.example.djw.get2workchat.Activities;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,9 +18,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,7 +27,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -46,14 +44,11 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class Chat_room_act extends AppCompatActivity {
@@ -94,6 +89,8 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
     private String LastKey="";
     private  static int total_items_load = 10;
     private int currentPage =1;
+    private PopupMenu popupMenu;
+    private int roomPosition;
 
 
     @Override
@@ -107,6 +104,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
 
         if(extras!= null){
+            roomPosition = extras.getInt("position");
             roomId = extras.getString(room_id,"");
             roomName = extras.getString(room_name, "");
 
@@ -129,12 +127,16 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
         LinearLayoutManager manager =new LinearLayoutManager(this);
         recyclerMesseges.setLayoutManager(manager);
-        MessageRecyclerAdapter.profileImageClick listener = new MessageRecyclerAdapter.profileImageClick() {
+
+
+        MessageRecyclerAdapter.MessageClick listener = new MessageRecyclerAdapter.MessageClick() {
             @Override
             public void profileclick(View v, int position) {
 
                 if(v.getId() == R.id.profie_message){
               String userId =       msgList.get(position).getSender_id();
+
+
 
 
               Intent i = new Intent(getApplicationContext(),Profile_Act.class);
@@ -147,9 +149,46 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                 }
 
             }
+
+            @Override
+            public void messageClick(View v, final int position) {
+                if(v.getId()== R.id.text_message){
+
+                    Toast.makeText(Chat_room_act.this, "Clicked", Toast.LENGTH_SHORT).show();
+                    popupMenu = new PopupMenu(getApplicationContext(),v);
+
+                    popupMenu.inflate(R.menu.message_menu);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()){
+                                case R.id.message_menu_copy:
+
+
+                                    Toast.makeText(Chat_room_act.this, "Menu Clicked ", Toast.LENGTH_SHORT).show();
+                                    copyMessage(msgList.get(position).getMessage());
+
+                                case R.id.message_menu_delete:
+                                    db.deleteMessage(msgList.get(position).getId(),roomId );
+                                    msgList.remove(position);
+                                    messageRecyclerAdapter.notifyItemRemoved(position);
+                                    messageRecyclerAdapter.notifyItemRangeChanged(position,msgList.size());
+
+
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    popupMenu.show();
+
+                }
+
+            }
         };
         messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId,getApplicationContext(),listener);
-           // manager.setReverseLayout(true);,g
+
             recyclerMesseges.setAdapter(messageRecyclerAdapter);
         db= new DBUtil();
 
@@ -160,6 +199,8 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
        getTextMesseges();
     }
+
+
 
     private void initUi() {
 
@@ -206,7 +247,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         getMenuInflater().inflate(R.menu.add_people_menu,menu);
 
         SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView)menu.findItem(R.id.search_chat).getActionView();
+        SearchView searchView = (SearchView)menu.findItem(R.id.chat_menu_search).getActionView();
         searchView.setOnQueryTextListener(onQueryTextListener());
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
@@ -249,10 +290,23 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
 
                 addPeopleDialog();
+                break;
+
+                case R.id.chat_menu_leav:
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("delete", true);
+                    returnIntent.putExtra("position", roomPosition);
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    db.userLeavRoom(roomId);
+                    finish();
+
+                    break;
 
                 default:
                     return super.onOptionsItemSelected(item);
+
             }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -341,8 +395,12 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                 db.getMessegesFromRoom(roomId,total_items_load,currentPage, new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Message message = dataSnapshot.getValue(Message.class);
-                      
+                       Message message = dataSnapshot.getValue(Message.class);
+
+
+
+                        recyclerMesseges.setAdapter(messageRecyclerAdapter);
+
                       itemPos++;
 
                       if(itemPos ==1){
@@ -352,7 +410,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                           LastPrevKey = messageKey;
                       }
                         
-                        msgList.add(message);
+                       msgList.add(message);
                             messageRecyclerAdapter.notifyDataSetChanged();
                             recyclerMesseges.scrollToPosition(msgList.size()-1);
                     //    recyclerMesseges.setItemViewCacheSize(9);
@@ -464,6 +522,16 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             });
 
         }
+    }
+
+    public void copyMessage(String Message){
+
+        ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+
+        ClipData clip = ClipData.newPlainText("Testclip",Message);
+        clipboard.setPrimaryClip(clip);
+
+
     }
 
     public void addPeopleDialog(){

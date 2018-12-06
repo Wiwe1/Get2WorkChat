@@ -23,8 +23,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
    // private DBUtil db;
      public  interface OnChatRoomClick{
 
-        void onClick(Chat_room chat_room);
-        void OnLongclick(Chat_room chat_room);
+        void onClick(Chat_room chat_room,int position);
+        void OnLongclick(Chat_room chat_room,int position);
 
     }
 
@@ -51,38 +51,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
     public void onBindViewHolder(@NonNull final chatViewHolder chatViewHolder, final int position) {
 
         chatViewHolder.bind(chatrooms.get(chatViewHolder.getAdapterPosition()));
-/*
-        chatViewHolder.room_options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                PopupMenu pop =  new PopupMenu(mContext,chatViewHolder.room_options);
-
-                pop.inflate(R.menu.chat_room_menu);
-
-                pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-
-                        switch (item.getItemId()){
-
-                            case R.id.delete_room:
-                               // Toast.makeText(mContext, "clicked"+chatrooms.get(chatViewHolder.getAdapterPosition()).getName(), Toast.LENGTH_SHORT).show();
-                                db.deleteRoom(chatrooms.get(chatViewHolder.getAdapterPosition()).getId());
-                                chatrooms.remove(chatViewHolder.getAdapterPosition());
-                                notifyItemRemoved(chatViewHolder.getAdapterPosition());
-                                break;
-                        }
-
-                        return false;
-                    }
-                });
-
-                pop.show();
-            }
-
-        });
-*/
 
     }
 
@@ -99,7 +67,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
         public chatViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.item_chat_room_name);
-            room_options = itemView.findViewById(R.id.item_memu_options);
+
         }
 
         public void bind (final Chat_room room){
@@ -110,14 +78,14 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    listener.OnLongclick(room);
+                    listener.OnLongclick(room,getAdapterPosition());
                     return false;
                 }
             });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onClick(room);
+                    listener.onClick(room,getAdapterPosition());
                 }
             });
 

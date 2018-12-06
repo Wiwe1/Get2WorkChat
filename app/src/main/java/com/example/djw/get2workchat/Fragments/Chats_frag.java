@@ -1,5 +1,6 @@
 package com.example.djw.get2workchat.Fragments;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class Chats_frag extends Fragment {
     private DBUtil db;
     private RecyclerView chatRooms;
     private chatAdapter chatAdapter;
+    private List <Chat_room> rooms = new ArrayList<>();
     private static final String room_id = "room_id";
     private static final String room_name = "room_name";
 
@@ -71,7 +73,8 @@ public class Chats_frag extends Fragment {
             @Override
             public void OnCallBack(List<Chat_room> list) {
                 Log.d("CALLBACK",list.toString());
-                chatAdapter = new chatAdapter(getContext(),list,listener);
+                rooms= list;
+                chatAdapter = new chatAdapter(getContext(),rooms,listener);
                 chatRooms.setAdapter(chatAdapter);
 
 
@@ -121,28 +124,51 @@ public class Chats_frag extends Fragment {
 
         chatAdapter.OnChatRoomClick listener = new chatAdapter.OnChatRoomClick() {
             @Override
-            public void onClick(Chat_room chat_room) {
+            public void onClick(Chat_room chat_room,int position) {
 
                 Intent i = new Intent(getActivity(), Chat_room_act.class);
                 i.putExtra(Chats_frag.room_id, chat_room.getId());
                 i.putExtra(Chats_frag.room_name, chat_room.getName());
-
-                startActivity(i);
-                Toast.makeText(getContext(), "Clicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
+                i.putExtra("position",position);
+                startActivityForResult(i,1);
+                Toast.makeText(getContext(), "Clicked"+position + chat_room.getName(), Toast.LENGTH_LONG).show();
 
             }
 
+
+
             @Override
-            public void OnLongclick(Chat_room chat_room) {
+            public void OnLongclick(Chat_room chat_room,int position) {
 
-                deleteRoomDialog(chat_room.getId().toString());
-                Toast.makeText(getContext(), "OnLongClicked" + chat_room.getName(), Toast.LENGTH_LONG).show();
+                deleteRoomDialog(chat_room.getId(),chat_room.getName(),position);
 
+
+                Toast.makeText(getContext(), "OnLongClicked"+position+ "" + chat_room.getName(), Toast.LENGTH_LONG).show();
             }
         };
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==1){
+            if(resultCode == Activity.RESULT_OK){
 
-    private void deleteRoomDialog(final String room_id){
+                if(data.getBooleanExtra("delete",true)){
+
+
+                    int position = data.getIntExtra("position",0);
+
+                    rooms.remove(position);
+                    chatAdapter.notifyItemRemoved(position);
+
+
+                }
+
+            }
+
+        }
+    }
+
+    private void deleteRoomDialog(final String room_id, final String room_name, final int position){
 
         // Setups up a dialo window for deleting a room
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -156,6 +182,10 @@ public class Chats_frag extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
 
                 db.deleteRoom(room_id);
+                rooms.remove(position);
+                chatAdapter.notifyItemRemoved(position);
+                Toast.makeText(getContext(), "Deleted room: "+ room_name, Toast.LENGTH_SHORT).show();
+
 
 
             }

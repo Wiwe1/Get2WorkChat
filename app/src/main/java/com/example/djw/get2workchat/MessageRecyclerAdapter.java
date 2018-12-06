@@ -37,18 +37,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
     private List<Message> messages;
     private List<Message> orig;
     private Context mcontext;
-    private profileImageClick listener;
+    private MessageClick listener;
     private RequestManager glide;
 
 
-    public interface profileImageClick {
+    public interface MessageClick {
 
         public void profileclick(View v, int position);
+        public void messageClick(View v,int position);
 
     }
 
 
-    public MessageRecyclerAdapter(RequestManager glide, List<Message> messages, String userId, Context mcontext, profileImageClick listener) {
+    public MessageRecyclerAdapter(RequestManager glide, List<Message> messages, String userId, Context mcontext, MessageClick listener) {
         this.glide = glide;
         this.userId = userId;
         this.messages = messages;
@@ -63,16 +64,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
         db = new DBUtil();
         View view;
-        //  SendMessageHolder holder = null;
         if (viewType == SENT) {
 
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_message_sent, viewGroup, false);
-            //      return new SendMessageHolder(view);
+
         } else {
 
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_messages_recived, viewGroup, false);
 
-            //return new ReceivedMessageHolder (view);
+
 
         }
 
@@ -86,14 +86,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
         Message message = messages.get(i);
 
-/*
-        ((ReceivedMessageHolder)viewHolder).profileimage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return true;
-            }
-        });
-*/
         db.getUserById(messages.get(i).getSender_id().toString(), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -102,7 +94,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
                 String image = dataSnapshot.child("profilePicturePath").getValue().toString();
                 if (chatViewHolder.getItemViewType() == SENT) {
                     glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_add_photo_alternate_24)).into(chatViewHolder.profileimage);
-                    //    glide.load(image).into(((SendMessageHolder)viewHolder).profileimage);
 
                 } else {
 
@@ -199,12 +190,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
         return super.getItemId(position);
     }
 
+//region filtering
+
     @Override
     public Filter getFilter() {
 
         return new Filter() {
             @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
+              protected FilterResults performFiltering(CharSequence constraint) {
                 final FilterResults oReturn = new FilterResults();
                 oReturn.values = messages;
                 oReturn.count = messages.size();
@@ -241,7 +234,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
             }
         };
-
+//endregion
 
     }
 
@@ -257,59 +250,37 @@ import de.hdodenhof.circleimageview.CircleImageView;
             imagemessage = itemView.findViewById(R.id.message_image);
             textmessage = itemView.findViewById(R.id.text_message);
             textmessage_num = itemView.findViewById(R.id.text_message_number);
-        }
-
-    }
-}
-/*
-
-    class ReceivedMessageHolder extends  RecyclerView.ViewHolder {
-        public    TextView textmessage ;
-        public ImageView imagemessage;
-        public CircleImageView profileimage;
-        public TextView textmessage_num;
-
-        public ReceivedMessageHolder(@NonNull View itemView) {
-            super(itemView);
-
-            textmessage = itemView.findViewById(R.id.text_message_recieved);
-            imagemessage = itemView.findViewById(R.id.send_message_image);
-            profileimage = itemView.findViewById(R.id.profie_message);
-            textmessage_num= itemView.findViewById(R.id.text_message_number);
-
-                    profileimage.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            if(listener!=null)
-                            {
-                                listener.profileclick(v,getAdapterPosition());
-                            }
 
 
-                            return true;
-                        }
-                    });
-
-           /* profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+            textmessage.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    return false;
+
+                    if(listener!=null){
+                        listener.messageClick(v,getAdapterPosition());
+                    }
+
+                   return true;
                 }
+            });
+
+            profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(listener!=null)
+                    {
+                        listener.profileclick(v,getAdapterPosition());
+                    }
+
+
+                    return true;
+                }       
             });
 
 
 
 
         }
-
-        void  bind(Message message){
-
-            textmessage.setText(message.getMessage());
-
-        }
+      }
     }
-}
 
-
-}
-*/

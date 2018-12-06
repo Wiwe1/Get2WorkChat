@@ -4,7 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="purple">#6200EE</color>
     <color name="dark_purple">#311B92</color>
-    <color name="dark_orange">#F57F17</color>
+    <color name="orange">#F57F17</color>
+    <color name="dark_orage">#ff6d00</color>
     <color name="colorAccent">#FF4081</color>
     <color name="graylight">#fafafa</color>
     <color name="starblue">#09c6df</color>

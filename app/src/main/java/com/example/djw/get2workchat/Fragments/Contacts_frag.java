@@ -40,8 +40,8 @@ public class Contacts_frag extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lstContacs = new ArrayList<>();
-        lstContacs.add(new Contact("Kristian Wiwe","28346876",R.drawable.wiwe));
+  //      lstContacs = new ArrayList<>();
+//        lstContacs.add(new Contact("Kristian Wiwe","28346876",R.drawable.wiwe));
 
 
 

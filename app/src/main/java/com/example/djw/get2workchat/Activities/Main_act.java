@@ -64,14 +64,8 @@ public class Main_act extends AppCompatActivity {
 
 
 
-      //  testUsr = new User("bob",null);
 
 
-//FirebaseDatabase database = FirebaseDatabase.getInstance();
-     //DatabaseReference myRef = database.getReference("users");
-   //     String userId = myRef.push().getKey();
-//        myRef.    child(userId).setValue(testUsr);
- //       myRef.push();
 
 
     }

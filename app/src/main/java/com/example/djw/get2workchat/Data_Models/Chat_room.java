@@ -1,22 +1,28 @@
 package com.example.djw.get2workchat.Data_Models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Chat_room {
     private String id;
     private String name;
-    private HashMap<String,Object> UserIds ;
+    private HashMap<String,Object> userids;
 
 
     public Chat_room(String id, String name, HashMap<String,Object> userIds) {
         this.id = id;
         this.name = name;
-        UserIds = userIds;
+        userids = userIds;
     }
 
-public Chat_room(){
+    public HashMap<String, Object> getUserids() {
+        return userids;
+    }
+
+    public void setUserids(HashMap<String, Object> userids) {
+        this.userids = userids;
+    }
+
+    public Chat_room(){
 
 }
 
