@@ -74,22 +74,26 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.chatViewHolder
 
                 this.room = room;
             name.setText(room.getName());
+if(listener!=null){
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    listener.OnLongclick(room,getAdapterPosition());
-                    return false;
-                }
-            });
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onClick(room,getAdapterPosition());
-                }
-            });
-
+    itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            listener.OnLongclick(room,getAdapterPosition());
+            return false;
         }
+    });
+    itemView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            listener.onClick(room,getAdapterPosition());
+        }
+    });
+
+}
+
+}
+
 
     }
 }

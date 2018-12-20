@@ -11,9 +11,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Database.DBUtil;
+import com.example.djw.get2workchat.Fragments.Chats_NotAdmin_frag;
 import com.example.djw.get2workchat.Fragments.Profile_frag;
 import com.example.djw.get2workchat.Fragments.Chats_frag;
 import com.example.djw.get2workchat.R;
@@ -21,6 +23,7 @@ import com.example.djw.get2workchat.ViewPagerAdapter;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -33,6 +36,7 @@ public class Main_act extends AppCompatActivity {
     private ViewPager vPage;
     private User testUsr;
     private Toolbar tbar;
+    private  String usrEmail;
     private String test;
 
 
@@ -43,7 +47,7 @@ public class Main_act extends AppCompatActivity {
         setContentView(R.layout.activity_main);
       //  test   = getIntent().getStringExtra("UserAuthId");
 
-
+ usrEmail= FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
 
         tbar = findViewById(R.id.toolbar);
@@ -52,7 +56,18 @@ public class Main_act extends AppCompatActivity {
         tbar.setTitleTextColor(Color.WHITE);
         vPageAdapp = new ViewPagerAdapter(getSupportFragmentManager());
 
-        vPageAdapp.AddFragment(new Chats_frag(),"Chats ");
+        if(usrEmail.endsWith("@get2work.dk")){
+
+            vPageAdapp.AddFragment(new Chats_frag(),"Chats ");
+
+
+        }else{
+            vPageAdapp.AddFragment(new Chats_NotAdmin_frag(),"Chats");
+            Toast.makeText(this, "not admin", Toast.LENGTH_LONG).show();
+
+        }
+
+
         vPageAdapp.AddFragment(new Profile_frag(),"Profile");
 //        vPageAdapp.AddFragment(new Contacts_frag(),"Contacts");
 

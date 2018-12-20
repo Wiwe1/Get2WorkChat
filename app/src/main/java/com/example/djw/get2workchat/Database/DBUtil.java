@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.example.djw.get2workchat.Data_Models.Chat_room;
 import com.example.djw.get2workchat.Data_Models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +36,7 @@ public class DBUtil {
     private DatabaseReference chatrooms = db.getReference("chatrooms").push();
     private DatabaseReference leavChatRoom = db.getReference("chatrooms");
     private DatabaseReference getChatRooms = db.getReference("chatrooms");
+    private DatabaseReference deleteChatRoom = db.getReference("chatrooms");
     private DatabaseReference UpdateChatRoom = db.getReference("chatrooms").child("UserIds").push();
     private DatabaseReference userEngagedChats = db.getReference("users").child(auth.getCurrentUser().getUid()).child("engaged chats");
     private List<Chat_room> chtrom;
@@ -61,7 +64,7 @@ public class DBUtil {
 
                 if (!dataSnapshot.exists()) {
                     String Auth_id = auth.getUid();
-                    User user = new User(auth.getCurrentUser().getDisplayName().toString(), auth.getCurrentUser().getEmail().toString(), null, null, null, null);
+                    User user = new User(auth.getCurrentUser().getDisplayName().toString(), auth.getCurrentUser().getEmail().toString(), null, null, "", null);
                     currentUser.setValue(user);
 
                 }
@@ -293,18 +296,28 @@ public class DBUtil {
             // Gets the engaged chats of the user
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                 String groupKey ="";
                 //    chtrom.clear();
-                final String groupKey = dataSnapshot.getValue().toString();
+                if(dataSnapshot.getValue().toString()!=null){
+
+                    groupKey = dataSnapshot.getValue().toString();
+                }
+
 
                 //Gets the rooms which corresponds to those ids.
+               // final String finalGroupKey = groupKey;
+                final String finalGroupKey = groupKey;
                 test.child("chatrooms/" + groupKey + "/name").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        chtrom.add(new Chat_room(groupKey, dataSnapshot.getValue().toString(), null));
-                        Log.d(dataSnapshot.getValue().toString(), "User is member of this group");
-                        // Call to callback interface for useing the results outside of onDataChange
-                        firebasCallback.OnCallBack(chtrom);
+                        if(dataSnapshot.exists()){
+                            chtrom.add(new Chat_room(finalGroupKey, dataSnapshot.getValue().toString(), null));
+                            Log.d(dataSnapshot.getValue().toString(), "User is member of this group");
+                            // Call to callback interface for useing the results outside of onDataChange
+                            firebasCallback.OnCallBack(chtrom);
+
+                        }
+
 
                     }
 
@@ -448,7 +461,15 @@ public class DBUtil {
 
                                     // Removes the room id if equal to the roo id given as parameter
 
-                                    ((DatabaseReference) removeUser).child(dsp.getKey()).removeValue();
+                                    ((DatabaseReference) removeUser).child(dsp.getKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("DBUtilDeletedRoom", "onCompleteRoom: "+roomid);
+
+                                          deleteChatRoom.child(roomid).setValue(null);
+
+                                        }
+                                    });
 
                                     //  removeUser.
 

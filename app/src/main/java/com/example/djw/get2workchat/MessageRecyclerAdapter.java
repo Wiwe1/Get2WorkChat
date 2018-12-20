@@ -85,19 +85,38 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
         Message message = messages.get(i);
-
+            // Gets the Profilepicturepath and name of the sender
         db.getUserById(messages.get(i).getSender_id().toString(), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               String image =null;
+                String name = null;
 
-                String name = dataSnapshot.child("userName").getValue().toString();
-                String image = dataSnapshot.child("profilePicturePath").getValue().toString();
+                if(dataSnapshot.exists()){
+
+                    if(dataSnapshot.child("userName").getValue().toString()!=null ){
+
+                    name = dataSnapshot.child("userName").getValue().toString();
+                    }
+                    if(dataSnapshot.child("profilePicturePath").getValue().toString()!=null){
+
+                       image  = dataSnapshot.child("profilePicturePath").getValue().toString();
+                    }
+
+                 }
+
+
+
+
+                 // Loads the profile picture based on viewtype. If no profilepicture is set a placeholder is loaded.
                 if (chatViewHolder.getItemViewType() == SENT) {
-                    glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_add_photo_alternate_24)).into(chatViewHolder.profileimage);
+
+                        glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(chatViewHolder.profileimage);
+
 
                 } else {
 
-                    glide.load(image).into(chatViewHolder.profileimage);
+                    glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(chatViewHolder.profileimage);
                 }
 
 
@@ -169,6 +188,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
     }
 
 
+    // Return either sent if the user is the sender otherwise received.
     @Override
     public int getItemViewType(int position) {
 
@@ -195,10 +215,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
     @Override
     public Filter getFilter() {
 
+        // Filter method extended from  Filtering . The mehod tages a copy of the messagelist and sorts it based on the constraints
         return new Filter() {
             @Override
               protected FilterResults performFiltering(CharSequence constraint) {
+              // Results to be returned
                 final FilterResults oReturn = new FilterResults();
+                // Default return values
                 oReturn.values = messages;
                 oReturn.count = messages.size();
 
@@ -224,6 +247,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
                 oReturn.count = messages.size();
                 return oReturn;
             }
+
+            // Retults from the Filter Method
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
@@ -252,6 +277,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
             textmessage_num = itemView.findViewById(R.id.text_message_number);
 
 
+
+
+            // onLongclick listenesrs form textmessage and profileimage. Clicks
             textmessage.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {

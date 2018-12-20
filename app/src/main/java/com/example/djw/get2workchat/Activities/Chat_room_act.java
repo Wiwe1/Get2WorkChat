@@ -153,11 +153,17 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             @Override
             public void messageClick(View v, final int position) {
                 if(v.getId()== R.id.text_message){
-
+                String userEmail = auth.getCurrentUser().getEmail();
                     Toast.makeText(Chat_room_act.this, "Clicked", Toast.LENGTH_SHORT).show();
                     popupMenu = new PopupMenu(getApplicationContext(),v);
 
-                    popupMenu.inflate(R.menu.message_menu);
+                        if(userEmail.endsWith("@get2work.dk")){
+                            popupMenu.inflate(R.menu.chat_message_menu);
+                        }else{
+
+                            popupMenu.inflate(R.menu.chat_message_notadmin_menu);
+                        }
+
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
@@ -281,6 +287,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -288,10 +295,10 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
                 case R.id.add_people:
 
-
                 addPeopleDialog();
                 break;
-
+                // User leavs a room. A intet sends the position from adapter along with a bool and result code
+                // for onActivityResult
                 case R.id.chat_menu_leav:
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("delete", true);
@@ -314,6 +321,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
   
 
 
+    // sends a text message to the chatroom.
     private void sendMessageRoom(){
 
         String senderName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName().toString();
@@ -473,21 +481,24 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 */
     }
 
+
+    // On result for getting the image uri from the Gallary intent
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-
-
+            // Gets the image uri
             final Uri imageuri = data.getData();
             resulturi = imageuri;
             String type = "image";
             UUID uuid = UUID.randomUUID();
+            // Puts the image in firebase storage. Under the specific roomId
             final StorageReference filepath =   FirebaseStorage.getInstance().getReference().child(roomId).child(uuid.toString());
             filepath.putFile(imageuri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
+                        //Gets the url of where the image is put and sends the image to the chat room.
                     filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -524,6 +535,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
         }
     }
 
+    // Method for copying a text string . Uses Androids build in clipboard service
     public void copyMessage(String Message){
 
         ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
@@ -534,6 +546,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
     }
 
+    // Method for adding new people to a chat room .
     public void addPeopleDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

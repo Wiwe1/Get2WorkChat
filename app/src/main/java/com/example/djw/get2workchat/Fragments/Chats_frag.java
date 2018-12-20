@@ -84,42 +84,6 @@ public class Chats_frag extends Fragment {
         return v;
     }
 
-    // Gets all Chatrooms(Names+ID's) from Firebase node Chatrooms and sets the adapter for the recycleView
-
-            private void getChatrooms(){
-
-                final List<Chat_room> rooms = new ArrayList<>();
-
-            db.getRooms(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                rooms.clear();
-
-
-                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-
-
-
-                    rooms.add(new Chat_room(dsp.getKey(),dsp.child("name").getValue().toString(),null));
-
-                }
-
-
-                chatAdapter = new chatAdapter(getContext(),rooms,listener);
-                chatRooms.setAdapter(chatAdapter);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                throw  databaseError.toException();
-
-            }
-        });
-
-    }
-
 
 
         chatAdapter.OnChatRoomClick listener = new chatAdapter.OnChatRoomClick() {
