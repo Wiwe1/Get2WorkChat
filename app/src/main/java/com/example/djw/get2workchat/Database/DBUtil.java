@@ -355,7 +355,7 @@ public class DBUtil {
         });
 
     }
-
+// sends a message to the chatroom
     public void sendMessageChatRoom(final String roomid, final String senderId, final String message, final String type, DatabaseReference.CompletionListener completionListener) {
 
         final Map<String, Object> mapMessage = new HashMap<>();
@@ -364,7 +364,7 @@ public class DBUtil {
         final DatabaseReference messagesTest = db.getReference("chatrooms").child(roomid).child("messeges").push();
         //   final DatabaseReference messagesTest2 = db.getReference("chatrooms").child(roomid).child("messeges");
         final DatabaseReference messagesNumberTest = db.getReference("chatrooms").child(roomid).child("count");
-        final long[] count = new long[1];
+        // Gets the incremented counter via a callback and sends the message to the chatroom
         updateCount(messagesNumberTest, new getCounterCallbck() {
             @Override
             public void getCounter(Long counter) {
@@ -397,6 +397,8 @@ public class DBUtil {
     // Increments the a counter used for message numbers.DoTransaction will be called multiple times due to client SDK trying to guess the value.
 
     public void updateCount(final DatabaseReference database, final getCounterCallbck counterCallbck){
+
+      // The transcation is called multiple times. This is due to the clientSDK trying to guess the value before checking the database
         database.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -446,7 +448,7 @@ public class DBUtil {
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                     // The User Id
-                    String userKey = dataSnapshot.getKey()    .toString();
+                    String userKey = dataSnapshot.getKey().toString();
                     Log.d("userKey", "onComplete: Removed room with id " + userKey);
 
                     final Query removeUser = db.getReference("users").child(userKey).child("engaged chats");
@@ -528,6 +530,7 @@ public class DBUtil {
 
     }
 
+    // Deletes a messsage from a specific chat room
     public void deleteMessage(final String messageId, final String roomId){
         DatabaseReference deleteMessage = db.getReference("chatrooms").child(roomId).child("messeges").child(messageId);
 

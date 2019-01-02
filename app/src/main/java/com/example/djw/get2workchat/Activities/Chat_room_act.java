@@ -9,8 +9,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +51,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Chat_room_act extends AppCompatActivity {
@@ -62,7 +65,8 @@ public class Chat_room_act extends AppCompatActivity {
     private DBUtil db;
     private String userId;
 
-
+    private PopupMenu popupMenu;
+    private int roomPosition;
     private EditText txtMessage;
     private ImageButton sendMessage;
     private ImageView SendImageMessage;
@@ -84,13 +88,17 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
 
    //Pagination
+
+    // Item position for handling the position of messages
     private int itemPos=0;
     private  String LastPrevKey ="";
+    // The last message key on a given pagination page
     private String LastKey="";
+    // Items to load
     private  static int total_items_load = 10;
+    // Page number increased when refreshing with the Swipe Layout
     private int currentPage =1;
-    private PopupMenu popupMenu;
-    private int roomPosition;
+
 
 
     @Override
@@ -134,7 +142,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
             public void profileclick(View v, int position) {
 
                 if(v.getId() == R.id.profie_message){
-              String userId =       msgList.get(position).getSender_id();
+              String userId = msgList.get(position).getSender_id();
 
 
 
@@ -173,12 +181,14 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
                                     Toast.makeText(Chat_room_act.this, "Menu Clicked ", Toast.LENGTH_SHORT).show();
                                     copyMessage(msgList.get(position).getMessage());
+                                    break;
 
                                 case R.id.message_menu_delete:
                                     db.deleteMessage(msgList.get(position).getId(),roomId );
                                     msgList.remove(position);
                                     messageRecyclerAdapter.notifyItemRemoved(position);
                                     messageRecyclerAdapter.notifyItemRangeChanged(position,msgList.size());
+                                    break;
 
 
                             }
@@ -200,23 +210,37 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
 
 
-
+        getTextMesseges();
         initUi();
 
-       getTextMesseges();
+
     }
 
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public boolean containsNumber(final List<Message> list, final Long messagenumber){
+        return list.stream().filter(o -> o.getMessage_number().equals(messagenumber)).findFirst().isPresent();
+    }
 
     private void initUi() {
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onRefresh() {
-                currentPage++;
+                    currentPage++;
                 itemPos = 0;
+                Long lastMessageNum = Long.valueOf(1);
+              boolean lastMessage =  containsNumber(msgList,lastMessageNum);
 
-              getMoreTextMessages();
+              if(lastMessage==true){
+
+                  refreshLayout.setRefreshing(false);
+              }else if(lastMessage ==false){
+
+                  getMoreTextMessages();
+              }
+
+
 
             }
         });
@@ -342,20 +366,29 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
     public void getMoreTextMessages(){
 
-
             db.getMoreMessages(roomId, LastKey, new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                     Message message = dataSnapshot.getValue(Message.class);
                     String messageKey = dataSnapshot.getKey();
-                  if(!LastPrevKey.equals(messageKey)){
-                      msgList.add(itemPos++,message);
-                  }else{
 
-                      LastPrevKey=LastKey ;
 
-                  }
+
+                     if(!LastPrevKey.equals(messageKey)){
+                       // if(!msgList.contains(message)) {
+                            msgList.add(itemPos++, message);
+                       // }else{
+                         //   Toast.makeText(Chat_room_act.this, "List does not contain this message"
+                           //         +message.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+                       // }
+                     }else{
+
+                         LastPrevKey=LastKey ;
+
+                     }
 
 
                     if(itemPos ==1){
@@ -394,10 +427,10 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
     }
 
-
+// Loads the first 10 messages
     public void getTextMesseges(){
 
-        // final List<Message> msgList = new ArrayList<>();
+
 
 
                 db.getMessegesFromRoom(roomId,total_items_load,currentPage, new ChildEventListener() {
@@ -405,12 +438,9 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                        Message message = dataSnapshot.getValue(Message.class);
 
+                       itemPos++;
 
-
-                        recyclerMesseges.setAdapter(messageRecyclerAdapter);
-
-                      itemPos++;
-
+                      // Gets the last message key of a pagination page . If the position is 1 the message is the last message
                       if(itemPos ==1){
 
                           String messageKey = dataSnapshot.getKey();
@@ -447,38 +477,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                     }
                 });
 
-        /*
-        db.getMessegesFromRoom(roomId, new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-               //   msgList.clear();
-                        for(DataSnapshot dsp: dataSnapshot.getChildren()){
-
-
-
-                            Log.d("SENDERID","onDataChange: MESSAGE"+ dsp.child("sender_id").getValue().toString());
-
-                   //msgList.add(new Message(dsp.getKey().toString(),dsp.child("sender_id").getValue().toString(),dsp.child("chat_room_id").toString() ,dsp.child("message").getValue().toString(),dsp.child("type").getValue().toString(),null));
-
-                        }
-
-                       // messageRecyclerAdapter = new MessageRecyclerAdapter(Glide.with(getApplicationContext()),msgList,userId);
-
-//                        messageRecyclerAdapter.setHasStableIds(true);
-
-
-                    recyclerMesseges.setAdapter(messageRecyclerAdapter);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-*/
     }
 
 

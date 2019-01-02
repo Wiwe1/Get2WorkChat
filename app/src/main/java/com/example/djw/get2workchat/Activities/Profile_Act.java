@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.R;
@@ -51,7 +52,7 @@ public class Profile_Act extends AppCompatActivity {
 
     private ImageView profile_image;
     private FirebaseAuth mAuth;
-  //  private String UserID;
+
     private Uri resulturi;
     private String profilePicturePath;
     private  DBUtil dbUtil;
@@ -62,9 +63,7 @@ private String userId;
         setContentView(R.layout.activity_profile);
 
         mAuth = FirebaseAuth.getInstance();
-      //  UserID = mAuth.getCurrentUser().getUid();
-       // FirebaseDatabase db = FirebaseDatabase.getInstance();
-       // myref = db.getReference("users").child(UserID);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbUtil = new DBUtil();
 
@@ -76,7 +75,7 @@ private String userId;
 
 
 
-        // Gets the RoomId and Name passed via an Intent from the fragment.
+        // Gets the UserID  passed via an Intent from the fragment.
         Bundle extras = getIntent().getExtras();
 
 
@@ -95,73 +94,6 @@ private String userId;
 
 
 
-
-
-/*
-    private void saveUserDetails() {
-
-        String name = profile_name.getText().toString();
-        String mail = profile_email.getText().toString();
-        String phone = profile_phone.getText().toString();
-        String proff = profile_profession.getText().toString();
-
-
-        dbUtil.updateUser(name, mail,phone,proff, null);
-
-        if (resulturi != null) {
-
-            final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("profile_image").child(mAuth.getCurrentUser().getUid());
-            Bitmap bitmap = null;
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resulturi);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            //Images Compression
-            ByteArrayOutputStream boas = new ByteArrayOutputStream();
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, boas);
-            byte[] data = boas.toByteArray();
-            UploadTask uploadTask = filepath.putBytes(data);
-
-
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                             Map newImage = new HashMap();
-                            newImage.put("profilePicturePath", uri.toString());
-
-
-                            dbUtil.updateUser(null, null, null, null, uri.toString());
-                            finish();
-                            return;
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            finish();
-                            return;
-                        }
-                    });
-                }
-            });
-
-
-        }
-
-    }
-
-
-
-
-*/
-
     private void getUserDetails() {
 
         dbUtil.getUserById(userId,new  ValueEventListener() {
@@ -170,7 +102,6 @@ private String userId;
 
                 if (dataSnapshot.exists()) {
 
-                    //    User user = dataSnapshot.getValue(User.class);
                     Map<String, Object> UserInfo = (Map<String, Object>) dataSnapshot.getValue();
                     if (UserInfo.get("userName") != null) {
                         String UserNmame = UserInfo.get("userName").toString();
@@ -182,7 +113,7 @@ private String userId;
                     }
                     if (UserInfo.get("profilePicturePath") != null) {
                         String profilepicture = UserInfo.get("profilePicturePath").toString();
-                        Glide.with(getApplication()).load(profilepicture).into(profile_image);
+                        Glide.with(getApplication()).load(profilepicture).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(profile_image);
 
 
                         if(UserInfo.get("profession") !=null){
@@ -203,46 +134,7 @@ private String userId;
 
             }
         });
-/*
-        myref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
 
-                    //    User user = dataSnapshot.getValue(User.class);
-                    Map<String, Object> UserInfo = (Map<String, Object>) dataSnapshot.getValue();
-                    if (UserInfo.get("userName") != null) {
-                        String UserNmame = UserInfo.get("userName").toString();
-                        profile_name.setText(UserNmame);
-                    }
-                    if (UserInfo.get("email") != null) {
-                        String email = UserInfo.get("email").toString();
-                        profile_email.setText(email);
-                    }
-                    if (UserInfo.get("profilePicturePath") != null) {
-                        String profilepicture = UserInfo.get("profilePicturePath").toString();
-                        Glide.with(getApplication()).load(profilepicture).into(profile_image);
-
-
-
-                    profile_name.setText(user.getUserName());
-                    profile_email.setText(user.getEmail());
-                    profile_phone.setText(user.getPhone_number());
-                    profilePicturePath = user.getProfilePicturePath();
-                    profile_profession.setText(user.getProfession());
-
-                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
-
-                 import   }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-*/
     }
 
     @Override

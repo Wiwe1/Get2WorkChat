@@ -61,7 +61,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-
+            // Returns layout based on viewtype
         db = new DBUtil();
         View view;
         if (viewType == SENT) {
@@ -97,6 +97,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
                     if(dataSnapshot.child("userName").getValue().toString()!=null ){
 
                     name = dataSnapshot.child("userName").getValue().toString();
+
                     }
                     if(dataSnapshot.child("profilePicturePath").getValue().toString()!=null){
 
@@ -110,12 +111,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
                  // Loads the profile picture based on viewtype. If no profilepicture is set a placeholder is loaded.
                 if (chatViewHolder.getItemViewType() == SENT) {
-
+                       chatViewHolder.Messagename.setText(name);
                         glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(chatViewHolder.profileimage);
 
 
                 } else {
-
+                  chatViewHolder.Messagename.setText(name);
                     glide.load(image).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(chatViewHolder.profileimage);
                 }
 
@@ -133,6 +134,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
         if (messages.get(i).getType().equals("text")) {
 
+
+            chatViewHolder.imagemessage.setVisibility(View.GONE);
+            chatViewHolder.textmessage.setVisibility(View.VISIBLE);
+            chatViewHolder.textmessage.setText(messages.get(chatViewHolder.getAdapterPosition()).getMessage());
+            // vh.imagemessage.setVisibility(View.GONE);
+
             if (messages.get(chatViewHolder.getAdapterPosition()).getMessage_number() != null) {
                 //  vh.textmessage_num.setText("");
                 chatViewHolder.textmessage_num.setVisibility(View.VISIBLE);
@@ -143,23 +150,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
             }
 
-            chatViewHolder.imagemessage.setVisibility(View.GONE);
-            chatViewHolder.textmessage.setVisibility(View.VISIBLE);
-            chatViewHolder.textmessage.setText(messages.get(chatViewHolder.getAdapterPosition()).getMessage());
-            // vh.imagemessage.setVisibility(View.GONE);
         } else if (messages.get(i).getType().equals("image")) {
-
-            if (messages.get(chatViewHolder.getAdapterPosition()).getMessage_number() != null) {
-
-                chatViewHolder.textmessage.setVisibility(View.VISIBLE);
-                String num = messages.get(chatViewHolder.getAdapterPosition()).getMessage_number().toString();
-                chatViewHolder.textmessage_num.setVisibility(View.VISIBLE);
-                chatViewHolder.textmessage_num.setText(num);
-            } else {
-
-                chatViewHolder.textmessage_num.setText("");
-
-            }
 
 
             chatViewHolder.textmessage.setVisibility(View.GONE);
@@ -171,6 +162,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
             // String url = messages.get(i).getMessage().toString().trim(); android:text="hej"
+
+            if (messages.get(chatViewHolder.getAdapterPosition()).getMessage_number() != null) {
+
+
+                String num = messages.get(chatViewHolder.getAdapterPosition()).getMessage_number().toString();
+                chatViewHolder.textmessage_num.setVisibility(View.VISIBLE);
+                chatViewHolder.textmessage_num.setText(num);
+            } else {
+
+                chatViewHolder.textmessage_num.setText("");
+
+            }
+
+
         }
 
 
@@ -227,10 +232,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
                 if (constraint.length() == 0) {
-
+                        // Resets the list back to the original state
                     messages = orig;
 
                 } else {
+                    // lopps throuh the list and searches for the number. If the number exsists the message is added to the results
                     final ArrayList<Message> resultls = new ArrayList<Message>();
                     for (final Message msg : messages) {
                         if ((msg.getMessage_number() != null && msg.getMessage_number().toString().contains(constraint))) {
@@ -248,8 +254,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
                 return oReturn;
             }
 
-            // Retults from the Filter Method
 
+// Method for getting the results from the filter method.
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
@@ -266,11 +272,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
     class ChatViewHolder extends RecyclerView.ViewHolder {
         public TextView textmessage_num;
         public TextView textmessage;
+        public TextView Messagename;
         public ImageView imagemessage;
         public CircleImageView profileimage;
 
+
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
+            Messagename  = itemView.findViewById(R.id.name_message);
             profileimage = itemView.findViewById(R.id.profie_message);
             imagemessage = itemView.findViewById(R.id.message_image);
             textmessage = itemView.findViewById(R.id.text_message);

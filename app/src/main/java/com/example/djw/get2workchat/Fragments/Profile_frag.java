@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.djw.get2workchat.Data_Models.User;
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.R;
@@ -42,14 +43,10 @@ public class Profile_frag extends Fragment {
      private  View v;
 
     private FirebaseDatabase db;
-    private DatabaseReference myref;
     private DBUtil  dbUtil;
-
     private EditText profile_name, profile_email, profile_phone, profile_profession;
-
     private ImageView profile_image;
     private Button btn_save;
-
     private FirebaseAuth mAuth;
     private String UserID;
     private Uri resulturi;
@@ -68,7 +65,7 @@ public class Profile_frag extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UserID = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
 
-        myref = db.getReference("users").child(UserID);
+
 
     dbUtil = new DBUtil();
 
@@ -126,6 +123,7 @@ public class Profile_frag extends Fragment {
             Bitmap bitmap = null;
 
             try {
+                    // Gets the image from the resultURI
                 bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), resulturi);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -140,6 +138,7 @@ public class Profile_frag extends Fragment {
             UploadTask uploadTask = filepath.putBytes(data);
 
 
+            // Uploads the profile image to the filepath and updates the users profile.
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -194,21 +193,17 @@ public class Profile_frag extends Fragment {
                     }
                     if (UserInfo.get("profilePicturePath") != null) {
                         String profilepicture = UserInfo.get("profilePicturePath").toString();
-                        Glide.with(getContext()).load(profilepicture).into(profile_image);
-
-                        if (UserInfo.get("profession") != null) {
-
-                            String profession = UserInfo.get("profession").toString();
-                            profile_profession.setText(profession);
-
-                        }
-
-
-
-
-                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
+                        Glide.with(getContext()).load(profilepicture).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(profile_image);
 
                     }
+
+                    if (UserInfo.get("profession") != null) {
+
+                        String profession = UserInfo.get("profession").toString();
+                        profile_profession.setText(profession);
+
+                    }
+
                 }
             }
 
@@ -217,52 +212,7 @@ public class Profile_frag extends Fragment {
 
             }
         });
-/*
-        myref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
 
-                    //    User user = dataSnapshot.getValue(User.class);
-                    Map<String, Object> UserInfo = (Map<String, Object>) dataSnapshot.getValue();
-                    if (UserInfo.get("userName") != null) {
-                        String UserNmame = UserInfo.get("userName").toString();
-                        profile_name.setText(UserNmame);
-                    }
-                    if (UserInfo.get("email") != null) {
-                        String email = UserInfo.get("email").toString();
-                        profile_email.setText(email);
-                    }
-                    if (UserInfo.get("profilePicturePath") != null) {
-                        String profilepicture = UserInfo.get("profilePicturePath").toString();
-                        Glide.with(getContext()).load(profilepicture).into(profile_image);
-
-                        if(UserInfo.get("profession")!=null){
-
-                            String profession = UserInfo.get("profession").toString();
-                            profile_profession.setText(profession);
-
-                        }
-
-
-                    profile_name.setText(user.getUserName());
-                    profile_email.setText(user.getEmail());
-                    profile_phone.setText(user.getPhone_number());
-                    profilePicturePath = user.getProfilePicturePath();
-                    profile_profession.setText(user.getProfession());
-
-                        //Glide.with(getApplication()).load(profilePicturePath).into(profile_image);
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-*/
     }
 
     @Override
