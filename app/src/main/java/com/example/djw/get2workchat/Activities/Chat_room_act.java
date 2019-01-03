@@ -232,10 +232,10 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
                 Long lastMessageNum = Long.valueOf(1);
               boolean lastMessage =  containsNumber(msgList,lastMessageNum);
 
-              if(lastMessage==true){
+              if(lastMessage){
 
                   refreshLayout.setRefreshing(false);
-              }else if(lastMessage ==false){
+              }else {
 
                   getMoreTextMessages();
               }
@@ -376,14 +376,7 @@ private MessageRecyclerAdapter messageRecyclerAdapter;
 
 
                      if(!LastPrevKey.equals(messageKey)){
-                       // if(!msgList.contains(message)) {
                             msgList.add(itemPos++, message);
-                       // }else{
-                         //   Toast.makeText(Chat_room_act.this, "List does not contain this message"
-                           //         +message.getMessage(), Toast.LENGTH_SHORT).show();
-
-
-                       // }
                      }else{
 
                          LastPrevKey=LastKey ;

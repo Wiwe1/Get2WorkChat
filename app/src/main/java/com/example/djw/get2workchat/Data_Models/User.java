@@ -13,14 +13,6 @@ public class User {
     private String engaged_chats;
 
 
-    public String getEngaged_chats() {
-        return engaged_chats;
-    }
-
-    public void setEngaged_chats(String engaged_chats) {
-        this.engaged_chats = engaged_chats;
-    }
-
     public User(String userName, String email, String phone_number, String profession, String profilePicturePath, String engaged_chats) {
 
             this.userName = userName;
@@ -75,4 +67,17 @@ public class User {
     public void setProfilePicturePath(String profilePicturePath) {
         this.profilePicturePath = profilePicturePath;
     }
+
+
+
+    public String getEngaged_chats()
+    {
+        return engaged_chats;
+    }
+
+    public void setEngaged_chats(String engaged_chats) {
+
+        this.engaged_chats = engaged_chats;
+    }
+
 }

@@ -1,5 +1,4 @@
 package com.example.djw.get2workchat.Fragments;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,7 +17,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.djw.get2workchat.Data_Models.User;
+
 import com.example.djw.get2workchat.Database.DBUtil;
 import com.example.djw.get2workchat.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,14 +32,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Profile_frag extends Fragment {
-     private  View v;
+    private  View v;
 
     private FirebaseDatabase db;
     private DBUtil  dbUtil;
@@ -60,14 +58,14 @@ public class Profile_frag extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.frag_profile,container,false);
 
-       mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UserID = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
 
 
 
-    dbUtil = new DBUtil();
+        dbUtil = new DBUtil();
 
 
         profile_name = (EditText) v.findViewById(R.id.profile_name);
@@ -94,11 +92,13 @@ public class Profile_frag extends Fragment {
 
 
                 saveUserDetails();
-
+                getUserDetails();
             }
         });
 
+
         return v;
+
 
     }
 
@@ -112,7 +112,7 @@ public class Profile_frag extends Fragment {
 
 
         try {
-            dbUtil.updateUser(name, mail,phone,proff, null);
+            dbUtil.updateUser(name, mail,phone,proff, null,null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,7 +123,7 @@ public class Profile_frag extends Fragment {
             Bitmap bitmap = null;
 
             try {
-                    // Gets the image from the resultURI
+                // Gets the image from the resultURI
                 bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), resulturi);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -149,14 +149,14 @@ public class Profile_frag extends Fragment {
                             newImage.put("profilePicturePath", uri.toString());
 
 
-                            dbUtil.updateUser(null, null, null, null, uri.toString());
-                        //    finish();
+                            dbUtil.updateUser(null, null, null, null, uri.toString(),null);
+                            //    finish();
                             return;
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                          //  finish();
+                            //  finish();
                             return;
                         }
                     });
@@ -194,6 +194,13 @@ public class Profile_frag extends Fragment {
                     if (UserInfo.get("profilePicturePath") != null) {
                         String profilepicture = UserInfo.get("profilePicturePath").toString();
                         Glide.with(getContext()).load(profilepicture).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(profile_image);
+
+                    }
+                    if(UserInfo.get("phone_number")!=null){
+
+
+                        String phonNum = UserInfo.get("phone_number").toString();
+                        profile_phone.setText(phonNum   );
 
                     }
 

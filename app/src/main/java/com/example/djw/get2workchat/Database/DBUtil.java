@@ -64,7 +64,7 @@ public class DBUtil {
 
                 if (!dataSnapshot.exists()) {
                     String Auth_id = auth.getUid();
-                    User user = new User(auth.getCurrentUser().getDisplayName().toString(), auth.getCurrentUser().getEmail().toString(), null, null, "", null);
+                    User user = new User(auth.getCurrentUser().getDisplayName().toString(), auth.getCurrentUser().getEmail().toString(), null, null, "",null);
                     currentUser.setValue(user);
 
                 }
@@ -92,7 +92,7 @@ public class DBUtil {
     }
 
 
-    public void updateUser(final String name, final String email, final String phone_number, final String prof, final String ProfilePicturePath) {
+    public void updateUser(final String name, final String email, final String phone_number, final String prof, final String ProfilePicturePath, String engagedchats) {
 
         currentUser.addValueEventListener(new ValueEventListener() {
             @Override
@@ -108,11 +108,12 @@ public class DBUtil {
                     userInfo.put("email", email);
                 if (phone_number != null)
                     userInfo.put("phone_number", phone_number);
-                ;
                 if (prof != null)
                     userInfo.put("profession", prof);
                 if (ProfilePicturePath != null)
                     userInfo.put("profilePicturePath", ProfilePicturePath);
+                if(engagedchats!=null)
+                    System.out.println("ost");
                 currentUser.updateChildren(userInfo);
             }
 

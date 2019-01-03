@@ -111,17 +111,19 @@ private String userId;
                         String email = UserInfo.get("email").toString();
                         profile_email.setText(email);
                     }
+                    if(UserInfo.get("phone_number")!=null){
+
+
+                        String phonNum = UserInfo.get("phone_number").toString();
+                        profile_phone.setText(phonNum   );
+
+                    }
+
                     if (UserInfo.get("profilePicturePath") != null) {
                         String profilepicture = UserInfo.get("profilePicturePath").toString();
                         Glide.with(getApplication()).load(profilepicture).apply(new RequestOptions().placeholder(R.drawable.baseline_account_circle_black_18dp)).into(profile_image);
 
 
-                        if(UserInfo.get("profession") !=null){
-
-                            String profession = UserInfo.get("profession").toString();
-                            profile_profession.setText(profession);
-
-                        }
 
 
 

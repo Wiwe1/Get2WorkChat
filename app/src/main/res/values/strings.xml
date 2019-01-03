@@ -11,8 +11,8 @@
     <string name="send_message_hint">Skriv en besked&#8230;</string>
     <string name="send_message_error">Beskedfeltet kan ikke være tomt</string>
     <string name="send_message_failed">Der opstod en fejl og beskeden kunne ikke sendes</string>
-    <string name="profile_profession_text">Skriv dit profession</string>
-    <string name="profile_email_text">Skriv dit email</string>
+    <string name="profile_profession_text">Skriv din profession</string>
+    <string name="profile_email_text">Skriv din email</string>
     <string name="profile_phone_number_text">Skriv dit telefonnummer</string>
     <string name="profile_save">Opdater</string>
     <string name="message_menu_profile">Profile</string>

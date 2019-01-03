@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
-                    android:hint="Please Enter Professions" />
+                    android:hint="@string/profile_profession_text" />
             </LinearLayout>
 
         <LinearLayout
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-               android:hint="Please enter phone number " />
+               android:hint="@string/profile_phone_number_text" />
         </LinearLayout>
 
         <LinearLayout
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                android:hint="Please enter email" />
+                android:hint="@string/profile_email_text" />
         </LinearLayout>
 
     </LinearLayout>
